@@ -1,17 +1,18 @@
 import re
 from datetime import datetime
 from collections import OrderedDict
+import warnings
+import json
 import pytest
 from _pytest.mark.structures import Mark
-import json
-import warnings
+
 
 
 
 _py_ext_re = re.compile(r"\.py$")
 
 def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
-        return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
+    return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
 
 warnings.formatwarning = warning_on_one_line
 
@@ -21,12 +22,11 @@ def pytest_addoption(parser):
     Adds commandline option for creating the json file.
     """
     group = parser.getgroup("Json report")
-    group.addoption("--jsonfile", 
+    group.addoption("--jsonfile",
                     action="store",
                     dest="jsonpath",
-                    default=None,#"test_report.json",
+                    default=None,
                     help='name of the json file where test details are saved.')
-  
 
 
 def pytest_configure(config):
@@ -85,14 +85,13 @@ class JiraJsonReport(object):
 
     def __init__(self, jsonpath):
         self.results = []
-        self.jsonpath = jsonpath 
+        self.jsonpath = jsonpath
         self.class_list = ['testrail_user', 'testrail_project', 'case_fields',
                             'result_fields', 'test_path', 'case_type',
                             'case_priority','assign']
         self.fun_list = ['author', 'description', 'jira_id', 'test_path',
                         'case_fields', 'result_fields', 'id_mappings',
                         'case_type', 'case_priority']
-        
 
     def append(self, result):
         self.results.append(result)
@@ -108,9 +107,9 @@ class JiraJsonReport(object):
         result['suite_name'] = names[-2]
         result['test_name'] = names[-1]
         if report.test_doc is None:
-          result['details'] = report.test_doc
+            result['details'] = report.test_doc
         else:
-          result['details'] = report.test_doc.strip()
+            result['details'] = report.test_doc.strip()
         result['markers'] = report.test_marker
         result['result'] = status
         result['duration'] = getattr(report, 'duration', 0.0)
@@ -184,10 +183,7 @@ class JiraJsonReport(object):
                         test_marker.append(x.name)
                     
         report.test_marker = ', '.join(test_marker)
-        #if len(report.nodeid.split("::")) == 3:
-            #print(report.nodeid.split("::")[1])
 
-                                           
         if report.when == "call":                
             for mark in item.iter_markers(name="railflow"):
                 for i in mark.kwargs:
@@ -209,7 +205,7 @@ class JiraJsonReport(object):
     def pytest_runtest_logreport(self, report):
 
         if report.passed:
-            if report.when == "call":  # ignore setup/teardown
+            if report.when == "call":
                 self.append_pass(report)
 
         elif report.failed:
@@ -229,13 +225,13 @@ class JiraJsonReport(object):
                 fieldnames = restructure(self.results)
                 if self.jsonpath:
                     filepath = self.jsonpath
-                    with open(filepath, 'w') as f:
-                        json.dump(fieldnames, f, sort_keys=False, indent=4, separators=(',', ': '))
+                    with open(filepath, 'w') as file:
+                        json.dump(fieldnames, file, sort_keys=False, indent=4, separators=(',', ': '))
            
             
 
     def pytest_terminal_summary(self, terminalreporter):
         if self.results:
-            terminalreporter.write_sep("-*","Json report written to %s" % self.jsonpath) 
+            terminalreporter.write_sep("-*","Json report written to %s" % self.jsonpath)
         else:
-            terminalreporter.write_sep("-*","No Json report is created.") 
+            terminalreporter.write_sep("-*","No Json report is created.")
