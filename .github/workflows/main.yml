@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.6, 3.7, 3.8, 3.9]
+        python-version: [2.7, 3.6]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -25,9 +25,6 @@ jobs:
       - name: Run tox
         run: |
           tox -e py
-      - name: Set up testrail plugin
-        run: |
-          pip install .
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -40,6 +37,3 @@ jobs:
       - name: Run tox
         run: |
           tox -e lint 
-      - name: Set up testrail plugin
-        run: |
-          pip install .
