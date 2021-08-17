@@ -15,15 +15,15 @@ Writing Test
 
 The plugin supports following metadata attributes. All other undefined metadata attributes will be rejected with a warning.
 
-=========================	  =========================
+=========================   =========================
 Function level Attributes   Class level Attributes
-=========================  	=========================
-author           						author
-description      						case_fields
-jira_id          						result-fields
-test_path        						test_path
-case_fields      						case-type
-result-fields    						case-priority
+=========================   =========================
+author                      author
+description                 case_fields
+jira_id                     result-fields
+test_path                   test_path
+case_fields                 case-type
+result-fields               case-priority
 id-mappings      
 case-type        
 case-priority    
