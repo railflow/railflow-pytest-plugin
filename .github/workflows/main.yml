@@ -27,9 +27,7 @@ jobs:
           pip install -r requirements.txt
           pip install .
       - name: Unit Test+Generate coverage report
-        run: |
-              coverage run -m pytest tests/ 
-              coverage xml
+        run: pytest --cov=tests --cov-report=xml tests/
             
       # - name: Doc Test
         # run: pytest docs/
