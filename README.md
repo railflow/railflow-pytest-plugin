@@ -1,5 +1,6 @@
 # pytest-railflow-testrail-reporter
 
+[![Testing](https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml/badge.svg)](https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml)
 [![Cov](https://github.com/railflow/railflow-pytest-plugin/actions/workflows/coverage.yml/badge.svg)](https://github.com/railflow/railflow-pytest-plugin/actions/workflows/coverage.yml)
 
 The plugin is ready now and can be accessed from the directory itself. The plugin now works for both python2 and python3.
