@@ -1,6 +1,6 @@
 # import os
 # import re
-# import io
+import io
 
 from setuptools import setup
 
@@ -9,12 +9,12 @@ setup(
     name="pytest-railflow-testrail-reporter",
     version="3-Alpha",
     description="json report generationusing pytest with optional metadata input",
-    # long_description=io.open("README.md", encoding="utf-8", errors="ignore").read(),
+    long_description=io.open("README.md", encoding="utf-8", errors="ignore").read(),
     # author="",
     # author_email=u"",
-    # url=u"",
-    # license = "",
-    # license_file = "",
+    url=u"https://github.com/railflow/railflow-pytest-plugin",
+    license="MIT License",
+    license_file="LICENSE",
     packages=["pytest_railflow_testrail_reporter"],
     entry_points={
         "pytest11": [
@@ -24,10 +24,10 @@ setup(
     install_requires=["pytest"],
     keywords="py.test pytest json railflow report",
     classifiers=[
-        "Development Status :: 3 - Development/Alpha",  # change to Production/Stable
+        "Development Status :: 4 - Beta"  # change to Production/Stable
         "Framework :: Pytest",
         "Intended Audience :: Developers",
-        # " License :: OSI Approved :: MIT License",
+        " License :: OSI Approved :: MIT License",
         "Operating System :: POSIX",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: MacOS :: MacOS X",

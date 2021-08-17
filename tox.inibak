@@ -1,8 +1,0 @@
-[tox]
-envlist = py27,py38
-
-[testenv]
-deps = 
-    pytest               # PYPI package providing pytest
-commands = 
-    py.test {posargs}

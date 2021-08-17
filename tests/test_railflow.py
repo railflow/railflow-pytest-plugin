@@ -29,6 +29,7 @@ def sample_test(testdir):
             assert 4 == 5
         """
         )
+    return testdir
 
 
 @pytest.fixture()
