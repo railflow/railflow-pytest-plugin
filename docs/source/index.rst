@@ -3,14 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Pytest-Railflow-Testrail-Reporter's documentation!
-=============================================================
+Pytest-Railflow-Testrail-Reporter
+=================================
 
+.. include:: ../../README.rst
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
                     
-   readme
 
 
 Indices and tables

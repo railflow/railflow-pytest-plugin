@@ -1,6 +1,0 @@
-README
-======
-
-```
-{include} ../../README.md
-```
