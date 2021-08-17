@@ -38,8 +38,25 @@ Run the following command in terminal:
 
 This will install the plugin to python package library.
 
-Run the Test
-------------
+Usage
+------
+
+Currently the plugin supports the metadata attributes given below. All other undefined metadata attributes will be rejected with a warning.
+
+===============  ===============
+Function level   Class level 
+Attributes       Attributes
+===============  ===============
+author           author
+description      case_fields
+jira_id          result-fields
+test_path        test_path
+case_fields      case-type
+result-fields    case-priority
+id-mappings      ...
+case-type        ...
+case-priority    ...
+===============  ===============
 
 To run the test, enter the following command in the terminal from test
 directory.
