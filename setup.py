@@ -9,7 +9,7 @@ setup(
     name="pytest-railflow-testrail-reporter",
     version="3-Alpha",
     description="json report generationusing pytest with optional metadata input",
-    long_description=io.open("README.md", encoding="utf-8", errors="ignore").read(),
+    long_description=io.open("README.rst", encoding="utf-8", errors="ignore").read(),
     # author="",
     # author_email=u"",
     url=u"https://github.com/railflow/railflow-pytest-plugin",
