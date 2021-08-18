@@ -24,7 +24,7 @@ setup(
     install_requires=["pytest"],
     keywords="py.test pytest json railflow report",
     classifiers=[
-        "Development Status :: 4 - Beta"  # change to Production/Stable
+        "Development Status :: 4 - Beta",  # change to Production/Stable
         "Framework :: Pytest",
         "Intended Audience :: Developers",
         " License :: OSI Approved :: MIT License",
