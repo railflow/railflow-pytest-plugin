@@ -17,7 +17,7 @@ class TestClass:
         b = 2
         c = a + b
         assert c == 5
-    
+
     @pytest.mark.xfail
     def test_subtract(self):
         a = 3
