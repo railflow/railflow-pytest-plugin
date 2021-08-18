@@ -1,7 +1,7 @@
 pytest-railflow-testrail-reporter
 =================================
 
-|Testing| |Cov|
+|Testing| |Cov| |MIT license|
 
 Pytest-Railflow-Testrail-reporter is the Pytest plugin generates json outputs with predefined metadata as json attributes defined during the tests.
 
@@ -70,3 +70,5 @@ directory.
    :target: https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml
 .. |Cov| image:: https://codecov.io/gh/railflow/railflow-pytest-plugin/branch/main/graph/badge.svg?token=7SB1JK4HWO
    :target: https://codecov.io/gh/railflow/railflow-pytest-plugin
+.. |MIT license| image:: https://img.shields.io/badge/License-MIT-blue.svg
+   :target: https://lbesson.mit-license.org/
