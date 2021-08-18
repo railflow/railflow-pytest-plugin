@@ -1,4 +1,3 @@
-import pytest
 
 def test_nothing():
-    assert 1==1  
+    assert 1 == 1
