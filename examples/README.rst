@@ -10,7 +10,7 @@ Install Requirements first using:
 
    pip install -r requirements.txt
    
-Writing Test 
+Writing Tests 
 ------------
 
 The plugin supports following metadata attributes. All other undefined metadata attributes will be rejected with a warning.
