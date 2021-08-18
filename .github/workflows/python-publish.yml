@@ -7,7 +7,7 @@
 # documentation.
 
 
-name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+name: Publish package to PyPI
 on:
   push:
     branches: [ main ]
