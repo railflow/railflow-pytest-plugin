@@ -43,9 +43,9 @@ Usage
 
 Currently the plugin supports the metadata attributes given below. All other undefined metadata attributes will be rejected with a warning.
 
-=========================	=========================
+=========================   ======================
 Function level Attributes   Class level Attributes
-=========================  	=========================
+=========================   ======================
 author           			author
 description      			case_fields
 jira_id          			result-fields
@@ -55,7 +55,7 @@ result-fields    			case-priority
 id-mappings      
 case-type        
 case-priority    
-=========================   =========================
+=========================   ======================
 
 To run the test, enter the following command in the terminal from test
 directory.
