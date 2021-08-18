@@ -43,9 +43,9 @@ So a sample test case looks like:
 	@pytest.mark.railflow(author="Bob")
 	def test_sample():
 	    """
-      This is a sample test
-      """
-      assure 1 == 1
+            This is a sample test
+            """
+            assert 1 == 1
       
 Run the Test
 ------------
@@ -77,11 +77,11 @@ Function level
                     id_mappings="map id1", case_type="test case", case_priority="important",
                     email="test@mail.com") # here email is a not defined parameter
 	def test_add():
-		  """
-		  Add two numbers
-		  """
-		  a = 2 + 7
-		  assert a == 9
+	    """
+	    Add two numbers
+	    """
+	    a = 2 + 7
+	    assert a == 9
 
 2. It is also possible to define the attributes in separate markers for a single test. But the metadata should be added in reverse order as shown below:
 
@@ -99,8 +99,8 @@ Function level
 	@pytest.mark.railflow(description='modulus of two numbers')
 	@pytest.mark.railflow(author='Bob123')
 	def test_add():
-		  """
-		  Add two numbers
-		  """
-		  a = 2 + 7
-		  assert a == 9
+	    """
+	    Add two numbers
+	    """
+	    a = 2 + 7
+	    assert a == 9
