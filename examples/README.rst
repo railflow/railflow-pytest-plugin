@@ -2,13 +2,16 @@ Examples Using Pytest-Railflow-Testrail-Reporter
 ================================================
 
 The plugin is ready now and can be accessed from the directory itself.
-The plugin now works for both python2.7 and python3.6 or greater.
+The plugin now works for both python 2.7 and python 3.6 or greater.
 
-Install Requirements first using:
+Installation
+------------
+
+You can install the plugin via pip using the following command.
 
 ::
 
-   pip install -r requirements.txt
+   pip install pytest-railflow-testrail-reporter
    
 Writing Tests 
 -------------

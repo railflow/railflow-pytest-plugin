@@ -18,25 +18,16 @@ In order to use pytest-railflow-testrail-reporter plugin, following prerequsites
 Installation
 ------------
 
-Install Requirements first using:
-
-::
-
-   pip install -r requirements.txt
-
 Using Pip
 ~~~~~~~~~
 
-To install the pytest-railflow-testrail-reporter plugin using pip
-open the terminal in root folder where ``setup.py`` is located.
-
-Run the following command in terminal:
+To install the pytest-railflow-testrail-reporter plugin using pip,run the following command in terminal:
 
 ::
 
-   pip install .
+   pip install pytest-railflow-testrail-reporter
 
-This will install the plugin to python package library.
+This will install the plugin to the system.
 
 Usage
 ------
