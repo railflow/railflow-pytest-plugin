@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name="pytest-railflow-testrail-reporter",
-    version= 0.1,
+    version=0.1,
     description="json report generationusing pytest with optional metadata input",
     long_description=io.open("README.rst", encoding="utf-8", errors="ignore").read(),
     # author="",
