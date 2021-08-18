@@ -17,7 +17,8 @@ class TestClass:
         b = 2
         c = a + b
         assert c == 5
-
+    
+    @pytest.mark.xfail
     def test_subtract(self):
         a = 3
         b = 2
@@ -35,6 +36,6 @@ class TestClass:
         case_type="test case",
         case_priority="important",
     )
-    @pytest.mark.parametrize("a,b,c", [(22, 11, 2), (64, 8, 8), (9, 3, 2)])
+    @pytest.mark.parametrize("a,b,c", [(22, 11, 2), (64, 8, 8), (9, 3, 3)])
     def test_divide(self, a, b, c):
         assert a / b == c

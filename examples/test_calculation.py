@@ -32,6 +32,7 @@ def test_power():
 @pytest.mark.railflow(jira_id=100241)
 @pytest.mark.railflow(description="modulus of two numbers")
 @pytest.mark.railflow(author="Bob123")
+@pytest.mark.xfail
 def test_modulus():
     a = 3
     b = 2
