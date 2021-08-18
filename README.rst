@@ -63,4 +63,4 @@ To-do:
 .. |Testing| image:: https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml/badge.svg
    :target: https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml
 .. |Cov| image:: https://codecov.io/gh/railflow/railflow-pytest-plugin/branch/main/graph/badge.svg?token=7SB1JK4HWO
-:target: https://codecov.io/gh/railflow/railflow-pytest-plugin
+   :target: https://codecov.io/gh/railflow/railflow-pytest-plugin
