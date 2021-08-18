@@ -1,5 +1,5 @@
-Tutorial Tests
-==============
+Examples Using Pytest-Railflow-Testrail-Reporter
+================================================
 
 The plugin is ready now and can be accessed from the directory itself.
 The plugin now works for both python2.7 and python3.6 or greater.
@@ -11,7 +11,7 @@ Install Requirements first using:
    pip install -r requirements.txt
    
 Writing Tests 
-------------
+-------------
 
 The plugin supports following metadata attributes. All other undefined metadata attributes will be rejected with a warning.
 
