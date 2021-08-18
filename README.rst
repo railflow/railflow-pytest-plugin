@@ -64,6 +64,9 @@ directory.
 
    pytest --jsonfile output.json
 
+Please check examples_ for more information and sample tests.
+
+
 
 
 .. |Testing| image:: https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml/badge.svg
@@ -72,3 +75,4 @@ directory.
    :target: https://codecov.io/gh/railflow/railflow-pytest-plugin
 .. |MIT license| image:: https://img.shields.io/badge/License-MIT-blue.svg
    :target: https://lbesson.mit-license.org/
+.. _examples: https://github.com/railflow/railflow-pytest-plugin/tree/main/examples
