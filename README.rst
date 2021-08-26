@@ -34,19 +34,27 @@ Usage
 
 Currently the plugin supports the metadata attributes given below. All other undefined metadata attributes will be rejected with a warning.
 
-=========================   ======================
-Function level Attributes   Class level Attributes
-=========================   ======================
-author           			author
-description      			case_fields
-jira_id          			result-fields
-test_path        			test_path
-case_fields      			case-type
-result-fields    			case-priority
-id-mappings      
-case-type        
-case-priority    
-=========================   ======================
++---------------------------------------------------+------------------------+
+| Function level Attributes                         | Class level Attributes |
++===================================================+========================+
+| testrail\_user                                    | > testrail\_user       |
++---------------------------------------------------+------------------------+
+| description                                       | > testrail\_project    |
++---------------------------------------------------+------------------------+
+| jira\_id                                          | > case\_fields         |
++---------------------------------------------------+------------------------+
+| test\_path                                        | > result\_fields       |
++---------------------------------------------------+------------------------+
+| case\_fields                                      | > test\_path           |
++---------------------------------------------------+------------------------+
+| result\_fields                                    | > case\_type           |
++---------------------------------------------------+------------------------+
+| test\_mappings                                    | > case\_priority       |
++---------------------------------------------------+------------------------+
+| case\_type                                        | > smart\_assign        |
++---------------------------------------------------+------------------------+
+| case\_priority                                    |                        |
++---------------------------------------------------+------------------------+
 
 To run the test, enter the following command in the terminal from test
 directory.
