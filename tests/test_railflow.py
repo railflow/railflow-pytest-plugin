@@ -8,10 +8,10 @@ def sample_test(testdir):
         """
     import pytest
 
-    @pytest.mark.railflow(author='Bob',  description='Addition of two numbers',
+    @pytest.mark.railflow(testrail_user='Bob',  description='Addition of two numbers',
                     jira_id=100231, test_path='test_calculation.py',
                     case_fields='filedA1', result_fields='fieldB1',
-                    id_mappings='map id1', case_type='test case', case_priority='important')
+                    test_mappings='map id1', case_type='test case', case_priority='important')
     def test_pass():
         assert 1==1
 
@@ -22,7 +22,7 @@ def sample_test(testdir):
                     test_path='manipulation.py',
                     case_type='Normal tests',
                     case_priority='Important',
-                    assign=['user1@gmail.com', 'user2@gmail.com'])
+                    smart_assign=['user1@gmail.com', 'user2@gmail.com'])
     class TestClass:
 
         def test_fail(self):
@@ -53,13 +53,13 @@ def test_open_json(load_json):
 @pytest.mark.parametrize(
     "A, B",
     [
-        ("author", "Bob"),
+        ("testrail_user", "Bob"),
         ("description", "Addition of two numbers"),
         ("jira_id", 100231),
         ("test_path", "test_calculation.py"),
         ("case_fields", "filedA1"),
         ("result_fields", "fieldB1"),
-        ("id_mappings", "map id1"),
+        ("test_mappings", "map id1"),
         ("case_type", "test case"),
         ("case_priority", "important"),
     ],
@@ -75,12 +75,12 @@ def test_json(load_json, A, B):
 @pytest.mark.parametrize(
     "A,B",
     [
-        ("suite_name", "test_json_test_report"),
+        ("class_name", None),
         ("test_name", "test_pass"),
         ("details", None),
         ("markers", ""),
         ("result", "PASSED"),
-        ("file_name", "test_json_test_report.py"),
+        ("file_name", "test_json_test_report"),
     ],
 )
 def test_json_test_report(load_json, A, B):
@@ -102,7 +102,7 @@ def test_json_test_report(load_json, A, B):
         ("result_fields", "output"),
         ("case_type", "Normal tests"),
         ("case_priority", "Important"),
-        ("assign", ["user1@gmail.com", "user2@gmail.com"]),
+        ("smart_assign", ["user1@gmail.com", "user2@gmail.com"]),
     ],
 )
 def test_json_class(load_json, A, B):
@@ -118,11 +118,11 @@ def test_json_class(load_json, A, B):
 @pytest.mark.parametrize(
     "A,B",
     [
-        ("suite_name", "TestClass"),
+        ("class_name", "TestClass"),
         ("test_name", "test_fail"),
         ("details", None),
         ("result", "FAILED"),
-        ("file_name", "test_json_class_report.py"),
+        ("file_name", "test_json_class_report"),
     ],
 )
 def test_json_class_report(load_json, A, B):

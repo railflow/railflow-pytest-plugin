@@ -89,6 +89,7 @@ class JiraJsonReport(object):
     def __init__(self, jsonpath):
         self.results = []
         self.jsonpath = jsonpath
+        self.extra = {}
         self.class_list = [
             "testrail_user",
             "testrail_project",
@@ -97,16 +98,16 @@ class JiraJsonReport(object):
             "test_path",
             "case_type",
             "case_priority",
-            "assign",
+            "smart_assign",
         ]
         self.fun_list = [
-            "author",
+            "testrail_user",
             "description",
             "jira_id",
             "test_path",
             "case_fields",
             "result_fields",
-            "id_mappings",
+            "test_mappings",
             "case_type",
             "case_priority",
         ]
@@ -120,8 +121,11 @@ class JiraJsonReport(object):
         """
         result = OrderedDict()
         names = mangle_test_address(report.nodeid)
-
-        result["suite_name"] = names[-2]
+        fname = report.location[0].split(".")[0]
+        if names[-2].split(".")[-1] != fname.split("/")[-1]:
+            result["class_name"] = names[-2]
+        else:
+            result["class_name"] = None
         result["test_name"] = names[-1]
         if report.test_doc is None:
             result["details"] = report.test_doc
@@ -132,10 +136,13 @@ class JiraJsonReport(object):
         result["duration"] = getattr(report, "duration", 0.0)
         result["timestamp"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         result["message"] = message
-        result["file_name"] = report.location[0]
+        result["file_name"] = fname.split("/")[-1]
+        if hasattr(report.longrepr, "reprtraceback"):
+            self.extra[result["file_name"]] = report.longrepr.reprtraceback
         self.append(result)
 
     def append_pass(self, report):
+
         status = "PASSED"
         message = None
         self.build_result(report, status, message)
@@ -148,13 +155,6 @@ class JiraJsonReport(object):
 
         else:
             message = str(report.longrepr)
-            # if hasattr(report.longrepr, "reprcrash"):
-            # message = report.longrepr.reprcrash.message
-            # elif isinstance(report.longrepr, (unicode, str)):
-            # message = report.longrepr
-            # else:
-            # message = str(report.longrepr)
-
             status = "FAILED"
 
         self.build_result(report, status, message)
@@ -234,6 +234,23 @@ class JiraJsonReport(object):
     def pytest_sessionfinish(self, session):
         if not hasattr(session.config, "slaveinput"):
             if self.results:
+                for k, v in self.extra.items():
+                    out = str(v)
+                    start = out.find("png: ") + len("png: ")
+                    end = out.find("\nhtml:")
+                    for i in range(len(self.results)):
+                        if isinstance(self.results[i], tuple):
+                            continue
+                        if self.results[i]["file_name"] == k:
+                            if (
+                                self.results[i]["result"] == "FAILED"
+                                or self.results[i]["result"] == "XFAILED"
+                            ):
+                                if ".png" in out:
+                                    self.results[i].update(
+                                        {"splinter_screenshot_dir": out[start:end]}
+                                    )
+
                 fieldnames = restructure(self.results)
                 if self.jsonpath:
                     filepath = self.jsonpath
