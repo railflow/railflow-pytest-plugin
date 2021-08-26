@@ -1,12 +1,12 @@
 # pytest-railflow-testrail-reporter
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pytest-railflow-testrail-reporter?style=plastic)](https://pypi.org/project/pytest-railflow-testrail-reporter/)
+[![PyPI](https://img.shields.io/pypi/v/pytest-railflow-testrail-reporter?style=plastic)](https://pypi.org/project/pytest-railflow-testrail-reporter/)
 [![Build](https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml/badge.svg)](https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml)
 [![Cov](https://codecov.io/gh/railflow/railflow-pytest-plugin/branch/main/graph/badge.svg?token=7SB1JK4HWO)](https://codecov.io/gh/railflow/railflow-pytest-plugin)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/pytest-railflow-testrail-reporter)](https://pypi.org/project/pytest-railflow-testrail-reporter/)
 
-Pytest-Railflow-Testrail-reporter is the Pytest plugin generates json
+pytest-railflow-testrail-reporter is a pytest plugin generates json
 outputs with predefined metadata as json attributes defined during the
 tests.
 
@@ -57,6 +57,9 @@ To run the test, enter the following command in the terminal from test
 directory.
 
     pytest --jsonfile output.json
+
+Examples
+========
 
 Please check
 [examples](https://github.com/railflow/railflow_pytest_examples)
