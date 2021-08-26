@@ -12,7 +12,7 @@ setup(
     long_description=io.open("README.md", encoding="utf-8", errors="ignore").read(),
     long_description_content_type='text/markdown',
     author="Railflow",
-    #author_email=u"",
+    # author_email=u"",
     url=u"https://github.com/railflow/railflow-pytest-plugin",
     license="MIT License",
     license_file="LICENSE",
