@@ -59,5 +59,12 @@ directory.
     pytest --jsonfile output.json
 
 Please check
-[examples](https://github.com/railflow/railflow-pytest-plugin/tree/main/examples)
+[examples](https://github.com/railflow/railflow_pytest_examples)
 for more information and sample tests.
+
+License
+=======
+
+This software is licensed under the [MIT license](https://lbesson.mit-license.org/)
+
+See [License file](https://github.com/railflow/railflow-pytest-plugin/blob/main/LICENSE) for more information.
