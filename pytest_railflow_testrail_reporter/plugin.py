@@ -91,23 +91,17 @@ class JiraJsonReport(object):
         self.jsonpath = jsonpath
         self.extra = {}
         self.class_list = [
-            "testrail_user",
-            "testrail_project",
             "case_fields",
             "result_fields",
-            "test_path",
             "case_type",
             "case_priority",
-            "smart_assign",
+            "smart_assignment",
         ]
         self.fun_list = [
-            "testrail_user",
-            "description",
-            "jira_id",
-            "test_path",
+            "jira_ids",
             "case_fields",
             "result_fields",
-            "test_mappings",
+            "testrail_ids",
             "case_type",
             "case_priority",
         ]

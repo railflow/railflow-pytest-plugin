@@ -43,14 +43,11 @@ other undefined metadata attributes will be rejected with a warning.
 
   Function level Attributes | Class level Attributes
   --------------------------|-----------------------
-  testrail\_user | testrail\_user
-  description | testrail\_project
-  jira\_id | case\_fields
-  test\_path | result\_fields
-  case\_fields | test\_path
+  jira\_ids | case\_fields
+  case\_fields | result\_fields
   result\_fields | case\_type
-  test\_mappings | case\_priority
-  case\_type | smart\_assign
+  testrail\_ids | case\_priority
+  case\_type | smart\_assignment
   case\_priority | 
 
 To run the test, enter the following command in the terminal from test
