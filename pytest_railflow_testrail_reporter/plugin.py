@@ -190,7 +190,7 @@ class JiraJsonReport(object):
         report.test_marker = ", ".join(test_marker)
 
         if report.when == "call":
-            for mark in item.iter_markers(name="railflow"):
+            for mark in reversed(list(item.iter_markers(name="railflow"))):
                 for i in mark.kwargs:
                     if item.cls:
                         if i in self.fun_list:
