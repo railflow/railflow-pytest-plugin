@@ -95,7 +95,7 @@ class JiraJsonReport(object):
             "result_fields",
             "case_type",
             "case_priority",
-            "smart_assignment",
+            "smart_failure_assignment",
         ]
         self.fun_list = [
             "jira_ids",
@@ -242,7 +242,7 @@ class JiraJsonReport(object):
                             ):
                                 if ".png" in out:
                                     self.results[i].update(
-                                        {"splinter_screenshot_dir": out[start:end]}
+                                        {"splinter_screenshots": out[start:end]}
                                     )
 
                 fieldnames = restructure(self.results)

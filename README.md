@@ -47,7 +47,7 @@ other undefined metadata attributes will be rejected with a warning.
   case\_fields | result\_fields
   result\_fields | case\_type
   testrail\_ids | case\_priority
-  case\_type | smart\_assignment
+  case\_type | smart\_failure\_assignment
   case\_priority | 
 
 To run the test, enter the following command in the terminal from test
