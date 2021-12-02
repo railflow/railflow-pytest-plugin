@@ -17,7 +17,7 @@ def sample_test(testdir):
                     result_fields='output',
                     case_type='Normal tests',
                     case_priority='Important',
-                    smart_assignment=['user1@gmail.com', 'user2@gmail.com'])
+                    smart_failure_assignment=['user1@gmail.com', 'user2@gmail.com'])
     class TestClass:
 
         def test_fail(self):
@@ -91,7 +91,7 @@ def test_json_test_report(load_json, A, B):
         ("result_fields", "output"),
         ("case_type", "Normal tests"),
         ("case_priority", "Important"),
-        ("smart_assignment", ["user1@gmail.com", "user2@gmail.com"]),
+        ("smart_failure_assignment", ["user1@gmail.com", "user2@gmail.com"]),
     ],
 )
 def test_json_class(load_json, A, B):
