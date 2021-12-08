@@ -148,14 +148,13 @@ class JiraJsonReport(object):
             message = "xfail-marked test passes Reason: %s " % report.wasxfail
 
         else:
-            message = str(report.longrepr)
+            message = report.longreprtext
             status = "FAILED"
 
         self.build_result(report, status, message)
 
     def append_error(self, report):
-
-        message = report.longrepr
+        message = report.longreprtext
         status = "ERROR"
         self.build_result(report, status, message)
 
@@ -167,7 +166,7 @@ class JiraJsonReport(object):
 
         else:
             status = "SKIPPED"
-            _, _, message = report.longrepr
+            _, _, message = report.longreprtext
             if message.startswith("Skipped: "):
                 message = message[9:]
 
