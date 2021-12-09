@@ -38,10 +38,11 @@ METHOD_ATTRS.update(CLASS_ATTRS)
 def _check_type(checker, v):
     if isinstance(checker, type):
         return isinstance(v, checker)
-    elif callable(checker):
+
+    if callable(checker):
         return checker(v)
-    else:
-        raise ValueError('Checker should be a python type or a callable')
+
+    raise ValueError('Checker should be a python type or a callable')
 
 
 def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
