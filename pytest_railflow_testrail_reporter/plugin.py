@@ -10,6 +10,40 @@ from _pytest.mark.structures import Mark
 _py_ext_re = re.compile(r"\.py$")
 
 
+def seq_of(t):
+    return lambda seq: hasattr(seq, '__iter__') and all(isinstance(o, t) for o in seq)
+
+
+CLASS_ATTRS = {
+    "case_fields": str,
+    "result_fields": str,
+    "case_type": str,
+    "case_priority": str,
+    "smart_failure_assignment": seq_of(str),
+}
+
+FUN_ATTRS = {
+    "jira_ids": seq_of(int),
+    "case_fields": str,
+    "result_fields": str,
+    "testrail_ids": seq_of(str),
+    "case_type": str,
+    "case_priority": str,
+}
+
+METHOD_ATTRS = FUN_ATTRS.copy()
+METHOD_ATTRS.update(CLASS_ATTRS)
+
+
+def _check_type(checker, v):
+    if isinstance(checker, type):
+        return isinstance(v, checker)
+    elif callable(checker):
+        return checker(v)
+    else:
+        raise ValueError('Checker should be a python type or a callable')
+
+
 def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
     return "%s:%s: %s:%s\n" % (filename, lineno, category.__name__, message)
 
@@ -90,21 +124,6 @@ class JiraJsonReport(object):
         self.results = []
         self.jsonpath = jsonpath
         self.extra = {}
-        self.class_list = [
-            "case_fields",
-            "result_fields",
-            "case_type",
-            "case_priority",
-            "smart_failure_assignment",
-        ]
-        self.fun_list = [
-            "jira_ids",
-            "case_fields",
-            "result_fields",
-            "testrail_ids",
-            "case_type",
-            "case_priority",
-        ]
 
     def append(self, result):
         self.results.append(result)
@@ -190,23 +209,18 @@ class JiraJsonReport(object):
 
         if report.when == "call":
             for mark in reversed(list(item.iter_markers(name="railflow"))):
-                for i in mark.kwargs:
-                    if item.cls:
-                        if i in self.fun_list:
-                            self.results.append((i, mark.kwargs[i]))
-                        elif i in self.class_list:
-                            self.results.append((i, mark.kwargs[i]))
+                for k, v in mark.kwargs.items():
+                    attrs = METHOD_ATTRS if item.cls else FUN_ATTRS
+                    if k in attrs:
+                        if _check_type(attrs[k], v):
+                            self.results.append((k, v))
                         else:
                             warnings.warn(
-                                "%s is not a valid class attribute" % i, UserWarning
-                            )
+                                "%s is not a valid value of attribute %s" % (v, k),
+                                UserWarning)
                     else:
-                        if i in self.fun_list:
-                            self.results.append((i, mark.kwargs[i]))
-                        else:
-                            warnings.warn(
-                                "%s is not a valid test attribute" % i, UserWarning
-                            )
+                        warnings.warn(
+                            "%s is not a valid attribute" % k, UserWarning)
 
     def pytest_runtest_logreport(self, report):
 
