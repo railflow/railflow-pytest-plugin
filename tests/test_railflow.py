@@ -8,8 +8,8 @@ def sample_test(testdir):
         """
     import pytest
 
-    @pytest.mark.railflow(jira_ids=100231, case_fields='filedA1', result_fields='fieldB1',
-                    testrail_ids='map id1', case_type='test case', case_priority='important')
+    @pytest.mark.railflow(jira_ids=[100231], case_fields='filedA1', result_fields='fieldB1',
+                    testrail_ids=['map id1'], case_type='test case', case_priority='important')
     def test_pass():
         assert 1==1
 
@@ -48,10 +48,10 @@ def test_open_json(load_json):
 @pytest.mark.parametrize(
     "A, B",
     [
-        ("jira_ids", 100231),
+        ("jira_ids", [100231]),
         ("case_fields", "filedA1"),
         ("result_fields", "fieldB1"),
-        ("testrail_ids", "map id1"),
+        ("testrail_ids", ["map id1"]),
         ("case_type", "test case"),
         ("case_priority", "important"),
     ],
