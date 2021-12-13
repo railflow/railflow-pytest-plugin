@@ -190,8 +190,8 @@ class JiraJsonReport(object):
         report.test_marker = ", ".join(test_marker)
 
         outcome, when = report.outcome, report.when
-        if ((outcome in {'passed', 'failed'} and when == 'call') or
-            (outcome == 'skipped' and when == 'setup')):
+        if (outcome in {'passed', 'failed'} and when == 'call') or \
+           (outcome == 'skipped' and when == 'setup'):
             for mark in reversed(list(item.iter_markers(name="railflow"))):
                 for i in mark.kwargs:
                     if item.cls:
