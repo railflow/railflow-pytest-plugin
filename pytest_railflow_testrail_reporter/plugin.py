@@ -186,7 +186,7 @@ class JiraJsonReport(object):
 
         else:
             status = "SKIPPED"
-            _, _, message = report.longreprtext
+            _, _, message = report.longrepr
             if message.startswith("Skipped: "):
                 message = message[9:]
 
@@ -208,7 +208,9 @@ class JiraJsonReport(object):
 
         report.test_marker = ", ".join(test_marker)
 
-        if report.when == "call":
+        outcome, when = report.outcome, report.when
+        if ((outcome in {'passed', 'failed'} and when == 'call') or
+            (outcome == 'skipped' and when == 'setup')):
             for mark in reversed(list(item.iter_markers(name="railflow"))):
                 for k, v in mark.kwargs.items():
                     attrs = METHOD_ATTRS if item.cls else FUN_ATTRS
