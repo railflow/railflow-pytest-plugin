@@ -244,6 +244,11 @@ class JiraJsonReport(object):
                                     self.results[i].update(
                                         {"splinter_screenshots": out[start:end]}
                                     )
+                        # The errors can be non-serializable, so stringify them
+                        if self.results[i].get("message", None) is not None:
+                            self.results[i].update(
+                                {"message": str(self.results[i]["message"])}
+                            )
 
                 fieldnames = restructure(self.results)
                 if self.jsonpath:
