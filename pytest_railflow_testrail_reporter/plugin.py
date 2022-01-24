@@ -5,6 +5,7 @@ import warnings
 import json
 import pytest
 from _pytest.mark.structures import Mark
+from _pytest._code.code import ExceptionRepr
 
 
 _py_ext_re = re.compile(r"\.py$")
@@ -129,7 +130,11 @@ class JiraJsonReport(object):
         result["result"] = status
         result["duration"] = getattr(report, "duration", 0.0)
         result["timestamp"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        result["message"] = message
+        if isinstance(message, ExceptionRepr):
+            # If this is a pytest error, get the message from the object
+            result["message"] = message.reprcrash.message
+        else:
+            result["message"] = message
         result["file_name"] = fname.split("/")[-1]
         if hasattr(report.longrepr, "reprtraceback"):
             self.extra[result["file_name"]] = report.longrepr.reprtraceback
@@ -244,11 +249,6 @@ class JiraJsonReport(object):
                                     self.results[i].update(
                                         {"splinter_screenshots": out[start:end]}
                                     )
-                        # The errors can be non-serializable, so stringify them
-                        if self.results[i].get("message", None) is not None:
-                            self.results[i].update(
-                                {"message": str(self.results[i]["message"])}
-                            )
 
                 fieldnames = restructure(self.results)
                 if self.jsonpath:
