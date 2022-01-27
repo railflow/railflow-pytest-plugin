@@ -221,7 +221,7 @@ class JiraJsonReport(object):
             # Check each mark
             for test_mark in test_item.own_markers:
                 # if it is a testrail mark
-                if test_mark['name'] == 'testrail':
+                if test_mark.name == 'testrail':
                     # Check each attribute on the test
                     for custom_attr_name in test_mark['kwargs']:
                         # Get the validation function for the given metric
