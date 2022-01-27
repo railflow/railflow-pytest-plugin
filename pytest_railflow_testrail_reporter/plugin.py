@@ -65,6 +65,28 @@ def mangle_test_address(address):
     names[-1] += brack + params
     return names
 
+def is_custom_attr_name_value_pairs(custom_attrs):
+    # Check if it is a list
+    if type(custom_attrs) == list:
+        # loop through values
+        for custom_attr in custom_attrs:
+            # ensure it is a key, value pair
+            if not type(custom_attr) == dict:
+                break
+            # ensure only 2 keys
+            if len(custom_attr) != 2:
+                break
+            # ensure keys are 'name' and 'value'
+            if custom_attr.get('name', None) is None or \
+                    custom_attr.get('value', None) is None:
+                break
+        else:
+            # If the loop never breaks then that means every attribute is a valid format
+            return True
+    # if any condition fails, we will return False here
+    return False
+
+
 
 def restructure(data):
     restructured_list = []
@@ -178,6 +200,39 @@ class JiraJsonReport(object):
 
         self.build_result(report, status, message)
 
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_collection_modifyitems(self, items):
+        # Custome attribute types
+        attr_types = {
+            'title': lambda val: type(val) == str,
+            'case_fields': is_custom_attr_name_value_pairs,
+            'result_fields': is_custom_attr_name_value_pairs,
+            'case_type': lambda val: type(val) == str,
+            'case_priority': lambda val: type(val) == str,
+            'testrail_ids': lambda val: type(val) == list and \
+                [type(v) == int for v in val].count(True) == len(val),
+            'jira_ids': lambda val: type(val) == list and \
+                [type(v) == str for v in val].count(True) == len(val),
+            'smart_failure_assignment': lambda val: type(val) == list and \
+                [type(v) == str for v in val].count(True) == len(val)
+        }
+        # Check every collected test
+        for test_item in items:
+            # Check each mark
+            for test_mark in test_item.own_markers:
+                # if it is a testrail mark
+                if test_mark['name'] == 'testrail':
+                    # Check each attribute on the test
+                    for custom_attr_name in test_mark['kwargs']:
+                        # Get the validation function for the given metric
+                        attr_val_fxn = attr_types.get(custom_attr_name, None)
+                        # If there is no function (invalid attribute) or the validation fails, raise an error
+                        if attr_val_fxn is None:
+                            raise ValueError(f'Attribute "{custom_attr_name}" is not a valid Railflow attribute.')
+                        if not attr_val_fxn(test_mark['kwargs'][custom_attr_name]):
+                            raise ValueError(f'Attribute "{custom_attr_name}" has an invalid value of {test_mark["kwargs"][custom_attr_name]}.')
+
+
     @pytest.mark.hookwrapper
     def pytest_runtest_makereport(self, item, call):
 
@@ -202,17 +257,9 @@ class JiraJsonReport(object):
                             self.results.append((i, mark.kwargs[i]))
                         elif i in self.class_list:
                             self.results.append((i, mark.kwargs[i]))
-                        else:
-                            warnings.warn(
-                                "%s is not a valid class attribute" % i, UserWarning
-                            )
                     else:
                         if i in self.fun_list:
                             self.results.append((i, mark.kwargs[i]))
-                        else:
-                            warnings.warn(
-                                "%s is not a valid test attribute" % i, UserWarning
-                            )
 
     def pytest_runtest_logreport(self, report):
 
