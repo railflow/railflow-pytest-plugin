@@ -226,10 +226,12 @@ class JiraJsonReport(object):
                     for custom_attr_name in test_mark['kwargs']:
                         # Get the validation function for the given metric
                         attr_val_fxn = attr_types.get(custom_attr_name, None)
-                        # If there is no function (invalid attribute) or the validation fails, raise an error
+                        # If there is no function (invalid attribute) or the validation fails,
+                        # raise an error
                         if attr_val_fxn is None:
                             raise ValueError(
-                                'Attribute "{}" is not a valid Railflow attribute.'.format(custom_attr_name))
+                                'Attribute "{}" is not a valid Railflow attribute.'.format(
+                                    custom_attr_name))
                         if not attr_val_fxn(test_mark['kwargs'][custom_attr_name]):
                             raise ValueError(
                                 'Attribute "{}" has an invalid value of {}.'.format(
