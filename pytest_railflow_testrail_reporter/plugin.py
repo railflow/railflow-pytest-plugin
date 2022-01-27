@@ -65,6 +65,7 @@ def mangle_test_address(address):
     names[-1] += brack + params
     return names
 
+
 def is_custom_attr_name_value_pairs(custom_attrs):
     # Check if it is a list
     if type(custom_attrs) == list:
@@ -85,7 +86,6 @@ def is_custom_attr_name_value_pairs(custom_attrs):
             return True
     # if any condition fails, we will return False here
     return False
-
 
 
 def restructure(data):
@@ -209,12 +209,9 @@ class JiraJsonReport(object):
             'result_fields': is_custom_attr_name_value_pairs,
             'case_type': lambda val: type(val) == str,
             'case_priority': lambda val: type(val) == str,
-            'testrail_ids': lambda val: type(val) == list and \
-                [type(v) == int for v in val].count(True) == len(val),
-            'jira_ids': lambda val: type(val) == list and \
-                [type(v) == str for v in val].count(True) == len(val),
-            'smart_failure_assignment': lambda val: type(val) == list and \
-                [type(v) == str for v in val].count(True) == len(val)
+            'testrail_ids': lambda val: type(val) == list and [type(v) == int for v in val].count(True) == len(val),
+            'jira_ids': lambda val: type(val) == list and [type(v) == str for v in val].count(True) == len(val),
+            'smart_failure_assignment': lambda val: type(val) == list and [type(v) == str for v in val].count(True) == len(val)
         }
         # Check every collected test
         for test_item in items:
@@ -235,7 +232,6 @@ class JiraJsonReport(object):
                                 'Attribute "{}" has an invalid value of {}.'.format(
                                     custom_attr_name, test_mark["kwargs"][custom_attr_name])
                                 )
-
 
     @pytest.mark.hookwrapper
     def pytest_runtest_makereport(self, item, call):
