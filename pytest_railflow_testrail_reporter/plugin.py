@@ -68,11 +68,11 @@ def mangle_test_address(address):
 
 def is_custom_attr_name_value_pairs(custom_attrs):
     # Check if it is a list
-    if type(custom_attrs) == list:
+    if isinstance(custom_attrs) == list:
         # loop through values
         for custom_attr in custom_attrs:
             # ensure it is a key, value pair
-            if not type(custom_attr) == dict:
+            if not isinstance(custom_attr) == dict:
                 break
             # ensure only 2 keys
             if len(custom_attr) != 2:
@@ -204,14 +204,17 @@ class JiraJsonReport(object):
     def pytest_collection_modifyitems(self, items):
         # Custome attribute types
         attr_types = {
-            'title': lambda val: type(val) == str,
+            'title': lambda val: isinstance(val) == str,
             'case_fields': is_custom_attr_name_value_pairs,
             'result_fields': is_custom_attr_name_value_pairs,
-            'case_type': lambda val: type(val) == str,
-            'case_priority': lambda val: type(val) == str,
-            'testrail_ids': lambda val: type(val) == list and [type(v) == int for v in val].count(True) == len(val),
-            'jira_ids': lambda val: type(val) == list and [type(v) == str for v in val].count(True) == len(val),
-            'smart_failure_assignment': lambda val: type(val) == list and [type(v) == str for v in val].count(True) == len(val)
+            'case_type': lambda val: isinstance(val) == str,
+            'case_priority': lambda val: isinstance(val) == str,
+            'testrail_ids': lambda val: isinstance(val) == list and
+            [isinstance(v) == int for v in val].count(True) == len(val),
+            'jira_ids': lambda val: isinstance(val) == list and
+            [isinstance(v) == str for v in val].count(True) == len(val),
+            'smart_failure_assignment': lambda val: isinstance(val) == list and
+            [isinstance(v) == str for v in val].count(True) == len(val)
         }
         # Check every collected test
         for test_item in items:
