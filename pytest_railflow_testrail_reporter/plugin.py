@@ -86,21 +86,56 @@ def is_custom_attr_name_value_pairs(custom_attrs):
     # if any condition fails, we will return False here
     return False
 
-
-
-def restructure(data):
+def restructure(data, session):
     restructured_list = []
+    restructured_classes = {}
     temp_list = []
-    for i in data:
-        if isinstance(i, OrderedDict):
-            restructured_dict = OrderedDict(
-                [("railflow_test_attributes", OrderedDict(temp_list))]
-            )
-            restructured_dict.update(i)
-            restructured_list.append(restructured_dict)
+
+    for entry in data:
+        if isinstance(entry, OrderedDict):
+            restructured_entry = OrderedDict(temp_list)
+            class_name = entry.get('class_name', None)
+            if class_name is not None:
+                class_keys = ['railflow_test_attributes', 'class_name', 'markers', 'file_name']
+                restructured_classes.get(class_name, None)
+                formatted_entry = restructured_classes.get(class_name, None)
+                if formatted_entry is None:
+                    formatted_entry = {
+                        'class_name':  entry['class_name'],
+                        'markers': entry['markers'],
+                        'file_name': entry['file_name'],
+                        'tests': [],
+                    }
+                    class_marks = False
+                    for session_item in session.items:
+                        if session_item.cls is not None:
+                            if session_item.cls.__name__ == class_name:
+                                for mark in session_item.cls.pytestmark:
+                                    if mark.name == 'railflow':
+                                        formatted_entry['railflow_test_attributes'] = mark.kwargs
+                                        class_marks = True
+                                        break
+                        if class_marks:
+                            break
+
+                formatted_test = {}
+                for entry_key in entry:
+                    if entry_key not in class_keys:
+                        formatted_test[entry_key] = entry[entry_key]
+                formatted_test['railflow_test_attributes'] = restructured_entry
+                formatted_entry['tests'].append(formatted_test)
+                restructured_classes[class_name] = formatted_entry
+            else:
+                formatted_entry = dict(entry)
+                formatted_entry.update(restructured_entry)
+                restructured_list.append(OrderedDict(formatted_entry))
             temp_list = []
         else:
-            temp_list.append(i)
+            temp_list.append(entry)
+
+    for _, restructured_class in restructured_classes.items():
+        restructured_list.append(restructured_class)
+
     return restructured_list
 
 
@@ -221,7 +256,7 @@ class JiraJsonReport(object):
             # Check each mark
             for test_mark in test_item.own_markers:
                 # if it is a testrail mark
-                if test_mark['name'] == 'testrail':
+                if test_mark.name == 'testrail':
                     # Check each attribute on the test
                     for custom_attr_name in test_mark['kwargs']:
                         # Get the validation function for the given metric
@@ -235,33 +270,35 @@ class JiraJsonReport(object):
 
     @pytest.mark.hookwrapper
     def pytest_runtest_makereport(self, item, call):
+        """
+        pytest hook that creates a test report for each of the setup, call, and teardown phases of a test
+        """
 
+        # Wait to look at results until after pytests processing
         outcome = yield
 
-        report = outcome.get_result()
-        report.test_doc = item.obj.__doc__
+        test_result = outcome.get_result()
+        test_result.test_doc = item.obj.__doc__
         test_marker = []
-        for k, v in item.keywords.items():
-            if isinstance(v, list):
-                for x in v:
-                    if isinstance(x, Mark) and x.name != "railflow":
-                        test_marker.append(x.name)
+        marks = item.keywords.get('pytestmark', None)
+        if marks is not None:
+            for mark in marks:
+                if mark.name != "railflow":
+                    test_marker.append(mark.name)
 
-        report.test_marker = ", ".join(test_marker)
+        test_result.test_marker = ", ".join(test_marker)
 
-        outcome, when = report.outcome, report.when
-        if (outcome in {'passed', 'failed'} and when == 'call') or \
-           (outcome == 'skipped' and when == 'setup'):
-            for mark in reversed(list(item.iter_markers(name="railflow"))):
-                for i in mark.kwargs:
+        if test_result.when == "call" and marks is not None:
+            for mark in reversed(marks):
+                for mark_arg in mark.kwargs:
                     if item.cls:
-                        if i in self.fun_list:
-                            self.results.append((i, mark.kwargs[i]))
-                        elif i in self.class_list:
-                            self.results.append((i, mark.kwargs[i]))
+                        if mark_arg in self.fun_list:
+                            self.results.append((mark_arg, mark.kwargs[mark_arg]))
+                        elif mark_arg in self.class_list:
+                            self.results.append((mark_arg, mark.kwargs[mark_arg]))
                     else:
-                        if i in self.fun_list:
-                            self.results.append((i, mark.kwargs[i]))
+                        if mark_arg in self.fun_list:
+                            self.results.append((mark_arg, mark.kwargs[mark_arg]))
 
     def pytest_runtest_logreport(self, report):
 
@@ -299,7 +336,8 @@ class JiraJsonReport(object):
                                         {"splinter_screenshots": out[start:end]}
                                     )
 
-                fieldnames = restructure(self.results)
+                fieldnames = restructure(self.results, session)
+
                 if self.jsonpath:
                     filepath = self.jsonpath
                     with open(filepath, "w") as file:
