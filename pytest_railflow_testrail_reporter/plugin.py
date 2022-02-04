@@ -127,7 +127,7 @@ def restructure(data, session):
                 restructured_classes[class_name] = formatted_entry
             else:
                 formatted_entry = dict(entry)
-                formatted_entry.update(restructured_entry)
+                formatted_entry.update({'railflow_test_attributes': restructured_entry})
                 restructured_list.append(OrderedDict(formatted_entry))
             temp_list = []
         else:

@@ -108,9 +108,7 @@ def test_json_class(load_json, A, B):
     "A,B",
     [
         ("class_name", "TestClass"),
-        ("test_name", "test_fail"),
-        ("details", None),
-        ("result", "FAILED"),
+        ("markers", ""),
         ("file_name", "test_json_class_report"),
     ],
 )
@@ -120,3 +118,18 @@ def test_json_class_report(load_json, A, B):
     """
     report_dict = load_json[1]
     assert report_dict[A] == B
+
+@pytest.mark.parametrize(
+    "key,val",
+    [
+        ("test_name", "test_fail"),
+        ("details", None),
+        ("result", "FAILED"),
+    ]
+)
+def test_json_class_test_report(load_json, key, val):
+    """
+    Tests failed class report parameters
+    """
+    report_dict = load_json[1]['tests'][0]
+    assert report_dict[key] == val
