@@ -4,7 +4,6 @@ from collections import OrderedDict
 import warnings
 import json
 import pytest
-from _pytest.mark.structures import Mark
 from _pytest._code.code import ExceptionRepr
 
 
@@ -65,6 +64,7 @@ def mangle_test_address(address):
     names[-1] += brack + params
     return names
 
+
 def is_custom_attr_name_value_pairs(custom_attrs):
     # Check if it is a list
     if type(custom_attrs) == list:
@@ -85,6 +85,7 @@ def is_custom_attr_name_value_pairs(custom_attrs):
             return True
     # if any condition fails, we will return False here
     return False
+
 
 def restructure(data, session):
     restructured_list = []
@@ -244,12 +245,12 @@ class JiraJsonReport(object):
             'result_fields': is_custom_attr_name_value_pairs,
             'case_type': lambda val: type(val) == str,
             'case_priority': lambda val: type(val) == str,
-            'testrail_ids': lambda val: type(val) == list and \
-                [type(v) == int for v in val].count(True) == len(val),
-            'jira_ids': lambda val: type(val) == list and \
-                [type(v) == str for v in val].count(True) == len(val),
-            'smart_failure_assignment': lambda val: type(val) == list and \
-                [type(v) == str for v in val].count(True) == len(val)
+            'testrail_ids': lambda val: type(val) == list and
+            [type(v) == int for v in val].count(True) == len(val),
+            'jira_ids': lambda val: type(val) == list and
+            [type(v) == str for v in val].count(True) == len(val),
+            'smart_failure_assignment': lambda val: type(val) == list and
+            [type(v) == str for v in val].count(True) == len(val)
         }
         # Check every collected test
         for test_item in items:
@@ -261,17 +262,22 @@ class JiraJsonReport(object):
                     for custom_attr_name in test_mark['kwargs']:
                         # Get the validation function for the given metric
                         attr_val_fxn = attr_types.get(custom_attr_name, None)
-                        # If there is no function (invalid attribute) or the validation fails, raise an error
+                        # If there is no function (invalid attribute) or
+                        # the validation fails, raise an error
                         if attr_val_fxn is None:
-                            raise ValueError(f'Attribute "{custom_attr_name}" is not a valid Railflow attribute.')
+                            raise ValueError(
+                                f'Attribute "{custom_attr_name}" is not a \
+                                valid Railflow attribute.')
                         if not attr_val_fxn(test_mark['kwargs'][custom_attr_name]):
-                            raise ValueError(f'Attribute "{custom_attr_name}" has an invalid value of {test_mark["kwargs"][custom_attr_name]}.')
-
+                            raise ValueError(
+                                f'Attribute "{custom_attr_name}" has an invalid \
+                                value of {test_mark["kwargs"][custom_attr_name]}.')
 
     @pytest.mark.hookwrapper
     def pytest_runtest_makereport(self, item, call):
         """
-        pytest hook that creates a test report for each of the setup, call, and teardown phases of a test
+        pytest hook that creates a test report for each of the setup, call,
+        and teardown phases of a test
         """
 
         # Wait to look at results until after pytests processing
