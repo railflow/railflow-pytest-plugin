@@ -119,6 +119,7 @@ def test_json_class_report(load_json, A, B):
     report_dict = load_json[1]
     assert report_dict[A] == B
 
+
 @pytest.mark.parametrize(
     "key,val",
     [
