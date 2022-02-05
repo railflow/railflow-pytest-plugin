@@ -7,6 +7,9 @@ import pytest
 from _pytest._code.code import ExceptionRepr
 
 
+CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'markers', 'file_name']
+
+
 _py_ext_re = re.compile(r"\.py$")
 
 
@@ -67,11 +70,11 @@ def mangle_test_address(address):
 
 def is_custom_attr_name_value_pairs(custom_attrs):
     # Check if it is a list
-    if type(custom_attrs) == list:
+    if isinstance(custom_attrs, list):
         # loop through values
         for custom_attr in custom_attrs:
             # ensure it is a key, value pair
-            if not type(custom_attr) == dict:
+            if not isinstance(custom_attr, dict):
                 break
             # ensure only 2 keys
             if len(custom_attr) != 2:
@@ -87,6 +90,20 @@ def is_custom_attr_name_value_pairs(custom_attrs):
     return False
 
 
+def get_class_markers(class_name, session):
+    class_marks = None
+    for session_item in session.items:
+        if session_item.cls is not None and session_item.cls.__name__ == class_name:
+            for mark in session_item.cls.pytestmark:
+                if mark.name == 'railflow':
+                    class_marks = mark.kwargs
+                    break
+        if class_marks is not None:
+            break
+
+    return class_marks
+
+
 def restructure(data, session):
     restructured_list = []
     restructured_classes = {}
@@ -97,7 +114,6 @@ def restructure(data, session):
             restructured_entry = OrderedDict(temp_list)
             class_name = entry.get('class_name', None)
             if class_name is not None:
-                class_keys = ['railflow_test_attributes', 'class_name', 'markers', 'file_name']
                 restructured_classes.get(class_name, None)
                 formatted_entry = restructured_classes.get(class_name, None)
                 if formatted_entry is None:
@@ -107,21 +123,11 @@ def restructure(data, session):
                         'file_name': entry['file_name'],
                         'tests': [],
                     }
-                    class_marks = False
-                    for session_item in session.items:
-                        if session_item.cls is not None:
-                            if session_item.cls.__name__ == class_name:
-                                for mark in session_item.cls.pytestmark:
-                                    if mark.name == 'railflow':
-                                        formatted_entry['railflow_test_attributes'] = mark.kwargs
-                                        class_marks = True
-                                        break
-                        if class_marks:
-                            break
-
+                    formatted_entry['railflow_test_attributes'] = get_class_markers(
+                        class_name, session)
                 formatted_test = {}
                 for entry_key in entry:
-                    if entry_key not in class_keys:
+                    if entry_key not in CLASS_KEYS:
                         formatted_test[entry_key] = entry[entry_key]
                 formatted_test['railflow_test_attributes'] = restructured_entry
                 formatted_entry['tests'].append(formatted_test)
@@ -240,17 +246,17 @@ class JiraJsonReport(object):
     def pytest_collection_modifyitems(self, items):
         # Custome attribute types
         attr_types = {
-            'title': lambda val: type(val) == str,
+            'title': lambda val: isinstance(val, str),
             'case_fields': is_custom_attr_name_value_pairs,
             'result_fields': is_custom_attr_name_value_pairs,
-            'case_type': lambda val: type(val) == str,
-            'case_priority': lambda val: type(val) == str,
-            'testrail_ids': lambda val: type(val) == list and
-            [type(v) == int for v in val].count(True) == len(val),
-            'jira_ids': lambda val: type(val) == list and
-            [type(v) == str for v in val].count(True) == len(val),
-            'smart_failure_assignment': lambda val: type(val) == list and
-            [type(v) == str for v in val].count(True) == len(val)
+            'case_type': lambda val: isinstance(val, str),
+            'case_priority': lambda val: isinstance(val, str),
+            'testrail_ids': lambda val: isinstance(val, list) and
+            [isinstance(v, int) for v in val].count(True) == len(val),
+            'jira_ids': lambda val: isinstance(val, list) and
+            [isinstance(v, str) for v in val].count(True) == len(val),
+            'smart_failure_assignment': lambda val: isinstance(val, list) and
+            [isinstance(v, str) for v in val].count(True) == len(val)
         }
         # Check every collected test
         for test_item in items:
