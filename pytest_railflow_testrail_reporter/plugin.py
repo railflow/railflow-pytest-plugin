@@ -265,13 +265,13 @@ class JiraJsonReport(object):
                         # If there is no function (invalid attribute) or
                         # the validation fails, raise an error
                         if attr_val_fxn is None:
-                            raise ValueError(
-                                f'Attribute "{custom_attr_name}" is not a \
-                                valid Railflow attribute.')
+                            raise ValueError('Attribute "{}" is not a valid \
+                                Railflow attribute'.format(custom_attr_name))
                         if not attr_val_fxn(test_mark['kwargs'][custom_attr_name]):
                             raise ValueError(
-                                f'Attribute "{custom_attr_name}" has an invalid \
-                                value of {test_mark["kwargs"][custom_attr_name]}.')
+                                'Attribute "{}" has an invalid value of {}.'.format(
+                                    custom_attr_name, 
+                                    test_mark["kwargs"][custom_attr_name]))
 
     @pytest.mark.hookwrapper
     def pytest_runtest_makereport(self, item, call):
