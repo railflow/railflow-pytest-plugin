@@ -270,7 +270,7 @@ class JiraJsonReport(object):
                         if not attr_val_fxn(test_mark['kwargs'][custom_attr_name]):
                             raise ValueError(
                                 'Attribute "{}" has an invalid value of {}.'.format(
-                                    custom_attr_name, 
+                                    custom_attr_name,
                                     test_mark["kwargs"][custom_attr_name]))
 
     @pytest.mark.hookwrapper
