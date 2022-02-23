@@ -65,7 +65,7 @@ def mangle_test_address(address):
 
     names[0] = names[0].replace("/", ".")
     names[0] = _py_ext_re.sub("", names[0])
-    names[-1] += brack + params
+    # names[-1] += brack + params
     return names
 
 
@@ -104,19 +104,42 @@ def get_class_markers(class_name, session):
 
     return class_marks
 
+def get_param_list(session, test_entry):
+    return "foo"
+
 
 def restructure(data, session):
     restructured_list = []
-    restructured_classes = {}
+    restructured_entries = {}
     temp_list = []
 
     for entry in data:
         if isinstance(entry, OrderedDict):
             restructured_entry = OrderedDict(temp_list)
             class_name = entry.get('class_name', None)
+
+            identifier = '{}{}:{}'.format(
+                            entry['file_name'],
+                            ".{}".format(entry['class_name']) if entry['class_name'] is not None else "",
+                            entry['test_name']
+                        )
+            formatted_test = restructured_entries.get(identifier, {})
+
+            if entry.get('parameterization', None):
+                if formatted_test != {}:
+                    formatted_test['parameters'].append(entry['parameterization'])
+                    continue
+                else:
+                    formatted_test['parameters'] = [entry['parameterization']]
+            for entry_key in entry:
+                    if (class_name is None or entry_key not in CLASS_KEYS) and \
+                        entry_key != 'parameterization':
+                        formatted_test[entry_key] = entry[entry_key]
+            formatted_test['railflow_test_attributes'] = restructured_entry
+
             if class_name is not None:
-                restructured_classes.get(class_name, None)
-                formatted_entry = restructured_classes.get(class_name, None)
+                restructured_entries.get(class_name, None)
+                formatted_entry = restructured_entries.get(class_name, None)
                 if formatted_entry is None:
                     formatted_entry = {
                         'class_name':  entry['class_name'],
@@ -126,23 +149,15 @@ def restructure(data, session):
                     }
                     formatted_entry['railflow_test_attributes'] = get_class_markers(
                         class_name, session)
-                formatted_test = {}
-                for entry_key in entry:
-                    if entry_key not in CLASS_KEYS:
-                        formatted_test[entry_key] = entry[entry_key]
-                formatted_test['railflow_test_attributes'] = restructured_entry
-                formatted_entry['tests'].append(formatted_test)
-                restructured_classes[class_name] = formatted_entry
-            else:
-                formatted_entry = dict(entry)
-                formatted_entry.update(
-                    {'railflow_test_attributes': restructured_entry})
-                restructured_list.append(OrderedDict(formatted_entry))
+                    formatted_entry['tests'].append(formatted_test)
+                    restructured_entries[identifier.split(':')[0]] = formatted_entry
+
+            restructured_entries[identifier] = formatted_test
             temp_list = []
         else:
             temp_list.append(entry)
 
-    for _, restructured_class in restructured_classes.items():
+    for _, restructured_class in restructured_entries.items():
         restructured_list.append(restructured_class)
 
     return restructured_list
@@ -193,6 +208,7 @@ class JiraJsonReport(object):
         else:
             result["details"] = report.test_doc.strip()
         result["markers"] = report.test_marker
+        result["parameterization"] = report.test_params
         result["result"] = status
         result["duration"] = getattr(report, "duration", 0.0)
         result["timestamp"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
@@ -333,13 +349,22 @@ class JiraJsonReport(object):
         test_result = outcome.get_result()
         test_result.test_doc = item.obj.__doc__
         test_marker = []
+        test_params = []
         marks = item.keywords.get('pytestmark', None)
         if marks is not None:
             for mark in marks:
                 if mark.name != "railflow":
                     test_marker.append(mark.name)
+                # Extract parameters if they exist
+                if mark.name == 'parametrize':
+                    for param_var in mark.args[0].split(','):
+                        test_params.append({
+                            'name': param_var,
+                            'value': item.funcargs[param_var]
+                        })
 
         test_result.test_marker = ", ".join(test_marker)
+        test_result.test_params = test_params
 
         failed_in_setup = test_result.when == "setup" and test_result.outcome != 'passed'
 
