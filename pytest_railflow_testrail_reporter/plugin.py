@@ -261,11 +261,12 @@ class JiraJsonReport(object):
         # Check every collected test
         for test_item in items:
             # Check each mark
-            for test_mark in test_item.own_markers:
+            for test_mark in test_item.iter_markers():
+                print(f'Looking at marker {test_mark} for {test_item}')
                 # if it is a testrail mark
-                if test_mark.name == 'testrail':
+                if test_mark.name == 'railflow':
                     # Check each attribute on the test
-                    for custom_attr_name in test_mark['kwargs']:
+                    for custom_attr_name in test_mark.kwargs:
                         # Get the validation function for the given metric
                         attr_val_fxn = attr_types.get(custom_attr_name, None)
                         # If there is no function (invalid attribute) or
@@ -273,11 +274,11 @@ class JiraJsonReport(object):
                         if attr_val_fxn is None:
                             raise ValueError('Attribute "{}" is not a valid \
                                 Railflow attribute'.format(custom_attr_name))
-                        if not attr_val_fxn(test_mark['kwargs'][custom_attr_name]):
+                        if not attr_val_fxn(test_mark.kwargs[custom_attr_name]):
                             raise ValueError(
                                 'Attribute "{}" has an invalid value of {}.'.format(
                                     custom_attr_name,
-                                    test_mark["kwargs"][custom_attr_name]))
+                                    test_mark.kwargs[custom_attr_name]))
 
     @pytest.mark.hookwrapper
     def pytest_runtest_makereport(self, item, call):
@@ -288,6 +289,12 @@ class JiraJsonReport(object):
 
         # Wait to look at results until after pytests processing
         outcome = yield
+
+        #         outcome, when = report.outcome, report.when
+        # if (outcome in {'passed', 'failed'} and when == 'call') or \
+        #    (outcome == 'skipped' and when == 'setup'):
+        #     for mark in reversed(list(item.iter_markers(name="railflow"))):
+        #         for i in mark.kwargs:
 
         test_result = outcome.get_result()
         test_result.test_doc = item.obj.__doc__
@@ -300,17 +307,12 @@ class JiraJsonReport(object):
 
         test_result.test_marker = ", ".join(test_marker)
 
-        if test_result.when == "call" and marks is not None:
+        failed_in_setup = test_result.when == "setup" and test_result.outcome != 'passed'
+
+        if (test_result.when == "call" or failed_in_setup) and marks is not None:
             for mark in reversed(marks):
                 for mark_arg in mark.kwargs:
-                    if item.cls:
-                        if mark_arg in self.fun_list:
-                            self.results.append((mark_arg, mark.kwargs[mark_arg]))
-                        elif mark_arg in self.class_list:
-                            self.results.append((mark_arg, mark.kwargs[mark_arg]))
-                    else:
-                        if mark_arg in self.fun_list:
-                            self.results.append((mark_arg, mark.kwargs[mark_arg]))
+                    self.results.append((mark_arg, mark.kwargs[mark_arg]))
 
     def pytest_runtest_logreport(self, report):
 
