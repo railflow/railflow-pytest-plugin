@@ -107,12 +107,12 @@ def get_class_markers(class_name, session):
 
 def restructure(data, session):
     restructured_list = []
+    restructured_classes = {}
     restructured_entries = {}
     temp_list = []
 
     for entry in data:
         if isinstance(entry, OrderedDict):
-            restructured_entry = OrderedDict(temp_list)
             class_name = entry.get('class_name', None)
 
             identifier = '{}{}:{}'.format(
@@ -131,11 +131,10 @@ def restructure(data, session):
                 if (class_name is None or entry_key not in CLASS_KEYS) and \
                         entry_key != 'parameterization':
                     formatted_test[entry_key] = entry[entry_key]
-            formatted_test['railflow_test_attributes'] = restructured_entry
+            formatted_test['railflow_test_attributes'] = OrderedDict(temp_list)
 
             if class_name is not None:
-                restructured_entries.get(class_name, None)
-                formatted_entry = restructured_entries.get(class_name, None)
+                formatted_entry = restructured_classes.get(class_name, None)
                 if formatted_entry is None:
                     formatted_entry = {
                         'class_name':  entry['class_name'],
@@ -145,16 +144,24 @@ def restructure(data, session):
                     }
                     formatted_entry['railflow_test_attributes'] = get_class_markers(
                         class_name, session)
-                    formatted_entry['tests'].append(formatted_test)
-                    restructured_entries[identifier.split(':')[0]] = formatted_entry
+                    restructured_classes[identifier.split(':')[0]] = formatted_entry
 
             restructured_entries[identifier] = formatted_test
             temp_list = []
         else:
             temp_list.append(entry)
 
-    for _, restructured_class in restructured_entries.items():
-        restructured_list.append(restructured_class)
+    for restructured_key, restructured_element in restructured_entries.items():
+        # if key is not there, it is a member of a class, it could exist and be None, so we just
+        # check if it exists
+        if 'class_name' not in restructured_element:
+            restructured_classes[restructured_key.split(':')[0]]['tests'].append(
+                restructured_element)
+        else:
+            restructured_list.append(restructured_element)
+
+    for _, restructured_element in restructured_classes.items():
+        restructured_list.append(restructured_element)
 
     return restructured_list
 
@@ -258,7 +265,7 @@ class JiraJsonReport(object):
 
     @pytest.hookimpl(tryfirst=True)
     def pytest_collection_modifyitems(self, items):
-        # Custome attribute types
+        # Custom attribute types
         attr_types = {
             'title': {
                 "validation": lambda val: isinstance(val, str),
@@ -276,11 +283,11 @@ class JiraJsonReport(object):
             },
             'case_type': {
                 "validation": lambda val: isinstance(val, str),
-                "expected": "String (i.e. 'Functional Test')"
+                "expected": "String (i.e. 'Automated')"
             },
             'case_priority': {
                 "validation": lambda val: isinstance(val, str),
-                "expected": "String (i.e. 'Highest')"
+                "expected": "String (i.e. 'High')"
             },
             'testrail_ids': {
                 "validation": lambda val: isinstance(val, list) and
@@ -337,12 +344,6 @@ class JiraJsonReport(object):
 
         # Wait to look at results until after pytests processing
         outcome = yield
-
-        #         outcome, when = report.outcome, report.when
-        # if (outcome in {'passed', 'failed'} and when == 'call') or \
-        #    (outcome == 'skipped' and when == 'setup'):
-        #     for mark in reversed(list(item.iter_markers(name="railflow"))):
-        #         for i in mark.kwargs:
 
         test_result = outcome.get_result()
         test_result.test_doc = item.obj.__doc__
