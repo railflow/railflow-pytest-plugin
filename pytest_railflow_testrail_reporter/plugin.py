@@ -43,7 +43,8 @@ def pytest_configure(config):
         config.json = JiraJsonReport(jsonpath)
         config.pluginmanager.register(config.json)
     # register an additional marker
-    config.addinivalue_line("markers", "railflow(options): read custom metadata")
+    config.addinivalue_line(
+        "markers", "railflow(options): read custom metadata")
 
 
 def pytest_unconfigure(config):
@@ -134,7 +135,8 @@ def restructure(data, session):
                 restructured_classes[class_name] = formatted_entry
             else:
                 formatted_entry = dict(entry)
-                formatted_entry.update({'railflow_test_attributes': restructured_entry})
+                formatted_entry.update(
+                    {'railflow_test_attributes': restructured_entry})
                 restructured_list.append(OrderedDict(formatted_entry))
             temp_list = []
         else:
@@ -246,39 +248,71 @@ class JiraJsonReport(object):
     def pytest_collection_modifyitems(self, items):
         # Custome attribute types
         attr_types = {
-            'title': lambda val: isinstance(val, str),
-            'case_fields': is_custom_attr_name_value_pairs,
-            'result_fields': is_custom_attr_name_value_pairs,
-            'case_type': lambda val: isinstance(val, str),
-            'case_priority': lambda val: isinstance(val, str),
-            'testrail_ids': lambda val: isinstance(val, list) and
-            [isinstance(v, int) for v in val].count(True) == len(val),
-            'jira_ids': lambda val: isinstance(val, list) and
-            [isinstance(v, str) for v in val].count(True) == len(val),
-            'smart_failure_assignment': lambda val: isinstance(val, list) and
-            [isinstance(v, str) for v in val].count(True) == len(val)
+            'title': {
+                "validation": lambda val: isinstance(val, str),
+                "expected": "String (i.e. 'My Foo')"
+            },
+            'case_fields': {
+                "validation": is_custom_attr_name_value_pairs,
+                "expected": "list of Name value pairs (i.e. [\{'name': 'Foo', 'value': 2312\}, "
+                "{'name': 'Bar', 'value': 'Baz'\}])"
+            },
+            'result_fields': {
+                "validation": is_custom_attr_name_value_pairs,
+                "expected": "list of Name value pairs (i.e. [\{'name': 'Foo', 'value': 2312\}, "
+                "{'name': 'Bar', 'value': 'Baz'\}])"
+            },
+            'case_type': {
+                "validation": lambda val: isinstance(val, str),
+                "expected": "String (i.e. 'Functional Test')"
+            },
+            'case_priority': {
+                "validation": lambda val: isinstance(val, str),
+                "expected": "String (i.e. 'Highest')"
+            },
+            'testrail_ids': {
+                "validation": lambda val: isinstance(val, list) and
+                [isinstance(v, int) for v in val].count(True) == len(val),
+                "expected": "List of intergers (i.e. [1, 2, 456, 7, 3])"
+            },
+            'jira_ids': {
+                "validation": lambda val: isinstance(val, list) and
+                [isinstance(v, str) for v in val].count(True) == len(val),
+                "expected": "List of strings (i.e. ['FOO-1', 'BAR-1', 'BAZ-56'])"
+            },
+            'smart_failure_assignment': {
+                "validation": lambda val: isinstance(val, list) and
+                [isinstance(v, str) for v in val].count(True) == len(val),
+                "expected": "List of strings (i.e. ['jdoe', 'jimbo'])"
+            }
         }
         # Check every collected test
         for test_item in items:
             # Check each mark
             for test_mark in test_item.iter_markers():
-                print(f'Looking at marker {test_mark} for {test_item}')
                 # if it is a testrail mark
                 if test_mark.name == 'railflow':
                     # Check each attribute on the test
                     for custom_attr_name in test_mark.kwargs:
                         # Get the validation function for the given metric
-                        attr_val_fxn = attr_types.get(custom_attr_name, None)
+                        attr_val_obj = attr_types.get(custom_attr_name, None)
+                        identifier = '{}{}:{}'.format(
+                            test_item.module.__name__,
+                            ".{}".format(test_item.cls.__name__) if test_item.cls is not None else "",
+                            test_item.name
+                        )
                         # If there is no function (invalid attribute) or
                         # the validation fails, raise an error
-                        if attr_val_fxn is None:
-                            raise ValueError('Attribute "{}" is not a valid \
-                                Railflow attribute'.format(custom_attr_name))
-                        if not attr_val_fxn(test_mark.kwargs[custom_attr_name]):
+                        if attr_val_obj is None:
+                            raise ValueError('{} - Attribute "{}" is not a valid \
+                                Railflow attribute'.format(identifier, custom_attr_name))
+                        if not attr_val_obj['validation'](test_mark.kwargs[custom_attr_name]):
                             raise ValueError(
-                                'Attribute "{}" has an invalid value of {}.'.format(
+                                '{} - Railflow attribute "{}" has an invalid value of {}, expected: {}'.format(
+                                    identifier,
                                     custom_attr_name,
-                                    test_mark.kwargs[custom_attr_name]))
+                                    test_mark.kwargs[custom_attr_name],
+                                    attr_val_obj['expected']))
 
     @pytest.mark.hookwrapper
     def pytest_runtest_makereport(self, item, call):
