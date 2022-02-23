@@ -104,9 +104,6 @@ def get_class_markers(class_name, session):
 
     return class_marks
 
-def get_param_list(session, test_entry):
-    return "foo"
-
 
 def restructure(data, session):
     restructured_list = []
@@ -119,22 +116,21 @@ def restructure(data, session):
             class_name = entry.get('class_name', None)
 
             identifier = '{}{}:{}'.format(
-                            entry['file_name'],
-                            ".{}".format(entry['class_name']) if entry['class_name'] is not None else "",
-                            entry['test_name']
-                        )
+                entry['file_name'],
+                ".{}".format(entry['class_name']) if entry['class_name'] is not None else "",
+                entry['test_name']
+            )
             formatted_test = restructured_entries.get(identifier, {})
 
             if entry.get('parameterization', None):
                 if formatted_test != {}:
                     formatted_test['parameters'].append(entry['parameterization'])
                     continue
-                else:
-                    formatted_test['parameters'] = [entry['parameterization']]
+                formatted_test['parameters'] = [entry['parameterization']]
             for entry_key in entry:
-                    if (class_name is None or entry_key not in CLASS_KEYS) and \
+                if (class_name is None or entry_key not in CLASS_KEYS) and \
                         entry_key != 'parameterization':
-                        formatted_test[entry_key] = entry[entry_key]
+                    formatted_test[entry_key] = entry[entry_key]
             formatted_test['railflow_test_attributes'] = restructured_entry
 
             if class_name is not None:
@@ -270,13 +266,13 @@ class JiraJsonReport(object):
             },
             'case_fields': {
                 "validation": is_custom_attr_name_value_pairs,
-                "expected": "list of Name value pairs (i.e. [\{'name': 'Foo', 'value': 2312\}, "
-                "{'name': 'Bar', 'value': 'Baz'\}])"
+                "expected": "list of Name value pairs (i.e. [{'name': 'Foo', 'value': 2312}, "
+                "{'name': 'Bar', 'value': 'Baz'}])"
             },
             'result_fields': {
                 "validation": is_custom_attr_name_value_pairs,
-                "expected": "list of Name value pairs (i.e. [\{'name': 'Foo', 'value': 2312\}, "
-                "{'name': 'Bar', 'value': 'Baz'\}])"
+                "expected": "list of Name value pairs (i.e. [{'name': 'Foo', 'value': 2312}, "
+                "{'name': 'Bar', 'value': 'Baz'}])"
             },
             'case_type': {
                 "validation": lambda val: isinstance(val, str),
@@ -314,7 +310,8 @@ class JiraJsonReport(object):
                         attr_val_obj = attr_types.get(custom_attr_name, None)
                         identifier = '{}{}:{}'.format(
                             test_item.module.__name__,
-                            ".{}".format(test_item.cls.__name__) if test_item.cls is not None else "",
+                            ".{}".format(test_item.cls.__name__) if test_item.cls is not None
+                            else "",
                             test_item.name
                         )
                         # If there is no function (invalid attribute) or
@@ -324,7 +321,8 @@ class JiraJsonReport(object):
                                 Railflow attribute'.format(identifier, custom_attr_name))
                         if not attr_val_obj['validation'](test_mark.kwargs[custom_attr_name]):
                             raise ValueError(
-                                '{} - Railflow attribute "{}" has an invalid value of {}, expected: {}'.format(
+                                '{} - Railflow attribute "{}" has an invalid value of '
+                                '{}, expected: {}'.format(
                                     identifier,
                                     custom_attr_name,
                                     test_mark.kwargs[custom_attr_name],
