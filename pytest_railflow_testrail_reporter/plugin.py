@@ -124,7 +124,8 @@ def restructure(data, session):
             for entry_key in entry:
                 if (class_name is None or entry_key not in CLASS_KEYS):
                     formatted_test[entry_key] = entry[entry_key]
-            formatted_test['railflow_test_attributes'] = OrderedDict(temp_list)
+            if len(temp_list) > 0:
+                formatted_test['railflow_test_attributes'] = OrderedDict(temp_list)
 
             if class_name is not None:
                 formatted_entry = restructured_classes.get(identifier.split(':')[0], None)
@@ -135,8 +136,9 @@ def restructure(data, session):
                         'file_name': entry['file_name'],
                         'tests': [],
                     }
-                    formatted_entry['railflow_test_attributes'] = get_class_markers(
-                        class_name, session)
+                    railflow_attr = get_class_markers(class_name, session)
+                    if railflow_attr is not None:
+                        formatted_entry['railflow_test_attributes'] = railflow_attr
                 formatted_entry['tests'].append(formatted_test)
                 restructured_classes[identifier.split(':')[0]] = formatted_entry
             else:
