@@ -8,13 +8,15 @@ def sample_test(testdir):
         """
     import pytest
 
-    @pytest.mark.railflow(jira_ids=100231, case_fields='filedA1', result_fields='fieldB1',
-                    testrail_ids='map id1', case_type='test case', case_priority='important')
+    @pytest.mark.railflow(jira_ids=['100231'],
+        case_fields=[{'name': 'fieldA1', 'value': 'valueA1'}],
+        result_fields=[{'name': 'fieldB1', 'value': 'valueB1'}],
+        testrail_ids=[1234], case_type='test case', case_priority='important')
     def test_pass():
         assert 1==1
 
-    @pytest.mark.railflow(case_fields='field',
-                    result_fields='output',
+    @pytest.mark.railflow(case_fields=[{'name': 'field', 'value': 'field value'}],
+                    result_fields=[{'name': 'output', 'value': 1209}],
                     case_type='Normal tests',
                     case_priority='Important',
                     smart_failure_assignment=['user1@gmail.com', 'user2@gmail.com'])
@@ -48,10 +50,10 @@ def test_open_json(load_json):
 @pytest.mark.parametrize(
     "A, B",
     [
-        ("jira_ids", 100231),
-        ("case_fields", "filedA1"),
-        ("result_fields", "fieldB1"),
-        ("testrail_ids", "map id1"),
+        ("jira_ids", ['100231']),
+        ("case_fields", [{'name': 'fieldA1', 'value': 'valueA1'}]),
+        ("result_fields", [{'name': 'fieldB1', 'value': 'valueB1'}]),
+        ("testrail_ids", [1234]),
         ("case_type", "test case"),
         ("case_priority", "important"),
     ],
@@ -87,8 +89,8 @@ def test_json_test_report(load_json, A, B):
 @pytest.mark.parametrize(
     "A,B",
     [
-        ("case_fields", "field"),
-        ("result_fields", "output"),
+        ("case_fields", [{'name': 'field', 'value': 'field value'}]),
+        ("result_fields", [{'name': 'output', 'value': 1209}]),
         ("case_type", "Normal tests"),
         ("case_priority", "Important"),
         ("smart_failure_assignment", ["user1@gmail.com", "user2@gmail.com"]),
@@ -108,9 +110,7 @@ def test_json_class(load_json, A, B):
     "A,B",
     [
         ("class_name", "TestClass"),
-        ("test_name", "test_fail"),
-        ("details", None),
-        ("result", "FAILED"),
+        ("markers", ""),
         ("file_name", "test_json_class_report"),
     ],
 )
@@ -120,3 +120,19 @@ def test_json_class_report(load_json, A, B):
     """
     report_dict = load_json[1]
     assert report_dict[A] == B
+
+
+@pytest.mark.parametrize(
+    "key,val",
+    [
+        ("test_name", "test_fail"),
+        ("details", None),
+        ("result", "FAILED"),
+    ]
+)
+def test_json_class_test_report(load_json, key, val):
+    """
+    Tests failed class report parameters
+    """
+    report_dict = load_json[1]['tests'][0]
+    assert report_dict[key] == val
