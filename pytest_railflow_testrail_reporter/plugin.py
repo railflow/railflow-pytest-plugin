@@ -7,7 +7,7 @@ import pytest
 from _pytest._code.code import ExceptionRepr
 
 
-CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'markers', 'file_name']
+CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'class_markers', 'file_name']
 
 
 _py_ext_re = re.compile(r"\.py$")
@@ -132,13 +132,13 @@ def restructure(data, session):
                 if formatted_entry is None:
                     formatted_entry = {
                         'class_name':  entry['class_name'],
-                        'markers': entry['markers'],
+                        'markers': entry['class_markers'],
                         'file_name': entry['file_name'],
                         'tests': [],
                     }
-                    railflow_attr = get_class_markers(class_name, session)
-                    if railflow_attr is not None:
-                        formatted_entry['railflow_test_attributes'] = railflow_attr
+                    if len(entry['class_railflow']) > 0:
+                        formatted_entry['railflow_test_attributes'] = OrderedDict(
+                            entry['class_railflow'])
                 formatted_entry['tests'].append(formatted_test)
                 restructured_classes[identifier.split(':')[0]] = formatted_entry
             else:
@@ -198,6 +198,8 @@ class JiraJsonReport(object):
         else:
             result["details"] = report.test_doc.strip()
         result["markers"] = report.test_marker
+        result["class_markers"] = report.class_marker
+        result["class_railflow"] = report.class_railflow
         if len(report.test_params) > 0:
             result["parameters"] = report.test_params
         result["result"] = status
@@ -335,22 +337,33 @@ class JiraJsonReport(object):
 
         test_result = outcome.get_result()
         test_result.test_doc = item.obj.__doc__
+        class_marker = []
+        class_railflow = []
         test_marker = []
         test_params = []
-        marks = item.keywords.get('pytestmark', None)
+
+        # Get all the test markes
+        marks = item.own_markers
         if marks is not None:
             for mark in marks:
                 if mark.name != "railflow":
                     test_marker.append(mark.name)
                 # Extract parameters if they exist
-                if mark.name == 'parametrize':
-                    for param_var in mark.args[0].split(','):
-                        test_params.append({
-                            'name': param_var,
-                            'value': item.funcargs[param_var]
-                        })
-
+                    if mark.name == 'parametrize':
+                        for param_var in mark.args[0].split(','):
+                            test_params.append({
+                                'name': param_var,
+                                'value': item.funcargs[param_var]
+                            })
         test_result.test_marker = ", ".join(test_marker)
+
+        # Get all the class markes
+        if item.cls is not None and len(item.cls.pytestmark):
+            for mark in item.cls.pytestmark:
+                if mark.name != 'railflow':
+                    class_marker.append(mark.name)
+        test_result.class_marker = ", ".join(class_marker)
+
         test_result.test_params = test_params
 
         failed_in_setup = test_result.when == "setup" and test_result.outcome != 'passed'
@@ -359,6 +372,13 @@ class JiraJsonReport(object):
             for mark in reversed(marks):
                 for mark_arg in mark.kwargs:
                     self.results.append((mark_arg, mark.kwargs[mark_arg]))
+
+            if item.cls is not None:
+                for mark in reversed(item.cls.pytestmark):
+                    for mark_arg in mark.kwargs:
+                        class_railflow.append((mark_arg, mark.kwargs[mark_arg]))
+
+            test_result.class_railflow = class_railflow
 
     def pytest_runtest_logreport(self, report):
 
