@@ -7,7 +7,8 @@ import pytest
 from _pytest._code.code import ExceptionRepr
 
 
-CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'class_markers', 'file_name']
+CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'file_name', 'attachments']
+CLASS_ONLY = ['class_railflow', 'class_markers']
 
 
 _py_ext_re = re.compile(r"\.py$")
@@ -122,7 +123,8 @@ def restructure(data, session):
             formatted_test = {}
 
             for entry_key in entry:
-                if (class_name is None or entry_key not in CLASS_KEYS):
+                if (class_name is None or entry_key not in CLASS_KEYS) and \
+                        entry_key not in CLASS_ONLY:
                     formatted_test[entry_key] = entry[entry_key]
             if len(temp_list) > 0:
                 formatted_test['railflow_test_attributes'] = OrderedDict(temp_list)
@@ -134,12 +136,15 @@ def restructure(data, session):
                         'class_name':  entry['class_name'],
                         'markers': entry['class_markers'],
                         'file_name': entry['file_name'],
+                        'attachments': [],
                         'tests': [],
                     }
                     if len(entry['class_railflow']) > 0:
                         formatted_entry['railflow_test_attributes'] = OrderedDict(
                             entry['class_railflow'])
                 formatted_entry['tests'].append(formatted_test)
+                if entry.get('attachments', None) is not None:
+                    formatted_entry['attachments'] += entry['attachments']
                 restructured_classes[identifier.split(':')[0]] = formatted_entry
             else:
                 restructured_list.append(formatted_test)
@@ -413,7 +418,7 @@ class JiraJsonReport(object):
                             ):
                                 if ".png" in out:
                                     self.results[i].update(
-                                        {"splinter_screenshots": out[start:end]}
+                                        {"attachments": [out[start:end]]}
                                     )
 
                 fieldnames = restructure(self.results, session)
