@@ -92,21 +92,7 @@ def is_custom_attr_name_value_pairs(custom_attrs):
     return False
 
 
-def get_class_markers(class_name, session):
-    class_marks = None
-    for session_item in session.items:
-        if session_item.cls is not None and session_item.cls.__name__ == class_name:
-            for mark in session_item.cls.pytestmark:
-                if mark.name == 'railflow':
-                    class_marks = mark.kwargs
-                    break
-        if class_marks is not None:
-            break
-
-    return class_marks
-
-
-def restructure(data, session):
+def restructure(data):
     restructured_list = []
     restructured_classes = {}
     temp_list = []
@@ -421,7 +407,7 @@ class JiraJsonReport(object):
                                         {"attachments": [out[start:end]]}
                                     )
 
-                fieldnames = restructure(self.results, session)
+                fieldnames = restructure(self.results)
 
                 if self.jsonpath:
                     filepath = self.jsonpath
