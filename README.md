@@ -365,13 +365,13 @@ npx railflow -k ABCDE-12345-FGHIJ-67890 -url https://testrail.your-server.com/ -
 
 Where:
 
-k - Railflow license key
-url - the URL of the TestRail server
-u - TestRail user name
-p - TestRail user password
-pr - name of the project in TestRail
-path - path to the subsection in TestRail where test cases will be exported to
-f - test report format - `junit`
+k - Railflow license key__
+url - the URL of the TestRail server__
+u - TestRail user name__
+p - TestRail user password__
+pr - name of the project in TestRail__
+path - path to the subsection in TestRail where test cases will be exported to__
+f - test report format - `pytest-railflow`__
 r - path to the report XML files
 
 Please see [Railflow NPM documentation](https://docs.railflow.io/cli/railflow-npm/) for the all the details about Railflow CLI options.
