@@ -6,8 +6,16 @@
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/pytest-railflow-testrail-reporter)](https://pypi.org/project/pytest-railflow-testrail-reporter/)
 
+<<<<<<< HEAD
 pytest-railflow-testrail-reporter is a custom reporter which generates json report with  railflow markers provided during tests.
 The reporter helps you to integrate your pytest test with TestRail easily by producing Json test report files which can be uploaded into TestRail by using powerful [Railflow NPM CLI](https://www.npmjs.com/package/railflow) tool.  
+=======
+pytest-railflow-testrail-reporter is a pytest plugin generates json
+outputs with predefined metadata as json attributes defined during the
+tests.
+
+It is designed for generating testrail outputs.
+>>>>>>> main
 
 Requirements
 ============
@@ -34,6 +42,7 @@ This will install the plugin to the system.
 Usage
 =====
 
+<<<<<<< HEAD
 Currently, the plugin supports the railflow configuration params given below. All
 other undefined configuration params will be rejected with a warning.
 
@@ -51,6 +60,11 @@ testrail_ids| IDs of test cases in TestRail. Should input as an array of integer
 smart_failure_assignment| Array of TestRail users to automatically assign failed test cases. Should input as a string array, e.g.: ['aaa@test.com','bbb@test.com']
 
 These railflow configurations can be either used in class level or function level.
+=======
+Currently the plugin supports the metadata attributes given below. All
+other undefined metadata attributes will be rejected with a warning.
+
+>>>>>>> main
 
   Function level Attributes | Class level Attributes
   --------------------------|-----------------------
@@ -59,9 +73,14 @@ These railflow configurations can be either used in class level or function leve
   result\_fields | case\_type
   testrail\_ids | case\_priority
   case\_type | smart\_failure\_assignment
+<<<<<<< HEAD
   case\_priority | title
   smart\_failure\_assignment |
   title |
+=======
+  case\_priority | 
+
+>>>>>>> main
 To run the test, enter the following command in the terminal from test
 directory.
 
@@ -70,6 +89,7 @@ directory.
 Examples
 ========
 
+<<<<<<< HEAD
 ### Example 1 : pytest tests within a class
 
 1. Install 'pytest-railflow-testrail-reporter' .
@@ -386,6 +406,8 @@ Please see [Railflow NPM documentation](https://docs.railflow.io/cli/railflow-np
 ![Alt Test result details in TestRail](./images/TestRail_testcase_data.png "Test result details in Testrail")
 
 
+=======
+>>>>>>> main
 Please check
 [examples](https://github.com/railflow/railflow_pytest_examples)
 for more information and sample tests.

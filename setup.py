@@ -7,10 +7,11 @@ from setuptools import setup
 
 setup(
     name="pytest-railflow-testrail-reporter",
-    version=0.1,
-    description="json report generationusing pytest with optional metadata input",
-    long_description=io.open("README.rst", encoding="utf-8", errors="ignore").read(),
-    # author="",
+    version="0.2.0",
+    description="Generate json reports along with specified metadata defined in test markers.",
+    long_description=io.open("README.md", encoding="utf-8", errors="ignore").read(),
+    long_description_content_type='text/markdown',
+    author="Railflow",
     # author_email=u"",
     url=u"https://github.com/railflow/railflow-pytest-plugin",
     license="MIT License",
