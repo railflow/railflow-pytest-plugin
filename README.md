@@ -360,7 +360,7 @@ npm install railflow
 6. Run Railflow CLI and upload test results into TestRail
 
 ```shell
-npx railflow -k ABCDE-12345-FGHIJ-67890 -url https://testrail.your-server.com/ -u testrail-username -p testrail-password -pr "Railflow Demo" -path section1/section2 -f junit -r pytest/*.json
+npx railflow -k ABCDE-12345-FGHIJ-67890 -url https://testrail.your-server.com/ -u testrail-username -p testrail-password -pr "Railflow Demo" -path section1/section2 -f pytest-railflow -r pytest/*.json
 ```
 
 Where:
