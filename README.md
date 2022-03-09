@@ -1,8 +1,6 @@
 # pytest-railflow-testrail-reporter
 
 [![PyPI](https://img.shields.io/pypi/v/pytest-railflow-testrail-reporter)](https://pypi.org/project/pytest-railflow-testrail-reporter/)
-[![Build](https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml/badge.svg)](https://github.com/railflow/railflow-pytest-plugin/actions/workflows/testing.yml)
-[![Cov](https://codecov.io/gh/railflow/railflow-pytest-plugin/branch/main/graph/badge.svg?token=7SB1JK4HWO)](https://codecov.io/gh/railflow/railflow-pytest-plugin)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/pytest-railflow-testrail-reporter)](https://pypi.org/project/pytest-railflow-testrail-reporter/)
 
@@ -37,9 +35,9 @@ Usage
 Currently, the plugin supports the railflow markers given below. All
 other undefined params will be rejected with a warning.
 
-### Railflow configuration params description
-
 To add railflow markers to the tests '@pytest.mark.railflow' marker is used. Railflow markers added as a json inside the '@pytest.mark.railflow'.
+
+### Railflow configuration params description
 
 Marker Name | Description |
 ------------| -------------|
