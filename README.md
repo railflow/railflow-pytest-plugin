@@ -350,7 +350,7 @@ npm install railflow
 6. Run Railflow CLI and upload test results into TestRail
 
 ```shell
-npx railflow -k ABCDE-12345-FGHIJ-67890 -url https://testrail.your-server.com/ -u testrail-username -p testrail-password -pr "Railflow Demo" -path section1/section2 -f pytest-railflow -r pytest/*.json
+npx railflow -k ABCDE-12345-FGHIJ-67890 -url https://testrail.your-server.com/ -u testrail-username -p testrail-password -pr "Railflow Demo" -path section1/section2 -f pytest-railflow -r pytest_example/*.json
 ```
 
 Where:
@@ -390,6 +390,114 @@ Please see [Railflow NPM documentation](https://docs.railflow.io/cli/railflow-np
 #### Parameterized tests details
 
 ![Alt Parameterized tests details in TestRail](./images/TestRail_parameterized_tests.png "Test result parameterized tests in Testrail")
+
+### Example 2 : pytest tests without a class (using pytest splinter)
+
+1. Install 'pytest-splinter' .
+
+```shell
+$ pip install pytest-splinter
+```
+
+Also, make sure that chromedriver or Firefox driver is installed in your system for running splinter.
+
+    For Firefox driver: [Splinter Documentation on Firefox Driver](https://splinter.readthedocs.io/en/latest/drivers/firefox.html)
+
+    For Chrome driver : [SPlinter Documentation on Chrome Driver](https://splinter.readthedocs.io/en/latest/drivers/chrome.html)
+
+2. Add pytest test.
+
+test_browser.py
+```shell
+import pytest
+ 
+@pytest.mark.railflow(
+    jira_ids=["301219"],
+    case_fields=[
+        {
+            "name": "Required text field",
+            "value": "Class"
+        }
+    ],
+    result_fields=[
+        {
+            "name": "Custom field",
+            "value": "Result from class"
+        }
+    ],
+    case_type="Automated",
+    case_priority="Critical",
+    smart_failure_assignment=["user1@gmail.com, user2@gmail.com"]
+)
+def test_google(browser):
+    """Test using real browser."""
+    url = "https://www.google.com"
+    browser.visit(url)
+    browser.fill('q', 'splinter - python acceptance testing for web applications')
+    # Find and click the 'search' button
+    button = browser.find_by_name('btnK')
+    # Interact with elements
+    button.click()
+    assert browser.is_text_present('splinter.cobrateam.info'), "splinter.cobrateam.info wasn't found... We need to"
+    ' improve our SEO techniques'
+```
+3. Run tests and generate report (using chrome driver)
+if '--splinter-webdriver' argument is not provided , it will use firefox as default web driver
+
+```shell
+pytest --splinter-webdriver chrome --jsonfile output.json test_browser.py
+```
+4. View report file
+
+output.json
+```shell
+import pytest
+ 
+@pytest.mark.railflow(
+[
+    {
+        "class_name": null,
+        "test_name": "test_google",
+        "details": "Test using real browser.",
+        "markers": "",
+        "result": "FAILED",
+        "duration": 8.681865530999858,
+        "timestamp": "2022-03-10T15:07:32",
+        "message": "browser = <splinter.driver.webdriver.chrome.WebDriver object at 0x7f35e0419d90>\n\n    @pytest.mark.railflow(\n        jira_ids=[\"301219\"],\n        case_fields=[\n            {\n                \"name\": \"Required text field\",\n                \"value\": \"Class\"\n            }\n        ],\n        result_fields=[\n            {\n                \"name\": \"Custom field\",\n                \"value\": \"Result from class\"\n            }\n        ],\n        case_type=\"Railflow\",\n        case_priority=\"Critical\",\n        smart_failure_assignment=[\"user1@gmail.com, user2@gmail.com\"]\n    )\n    def test_google(browser):\n        \"\"\"Test using real browser.\"\"\"\n        url = \"https://www.google.com\"\n        browser.visit(url)\n        browser.fill('q', 'splinter - python acceptance testing for web applications')\n        # Find and click the 'search' button\n        button = browser.find_by_name('btnK')\n        # Interact with elements\n        button.click()\n>       assert browser.is_text_present('splinter.cobrateam.info'), \"splinter.cobrateam.info wasn't found... We need to\"\nE       AssertionError: splinter.cobrateam.info wasn't found... We need to\nE       assert False\nE        +  where False = <bound method BaseWebDriver.is_text_present of <splinter.driver.webdriver.chrome.WebDriver object at 0x7f35e0419d90>>('splinter.cobrateam.info')\nE        +    where <bound method BaseWebDriver.is_text_present of <splinter.driver.webdriver.chrome.WebDriver object at 0x7f35e0419d90>> = <splinter.driver.webdriver.chrome.WebDriver object at 0x7f35e0419d90>.is_text_present\n\ntest_browser.py:30: AssertionError",
+        "file_name": "test_browser",
+        "attachments": [
+            " /home/user/projects/pytest_example/test_google-browser.png"
+        ],
+        "railflow_test_attributes": {
+            "jira_ids": [
+                "301219"
+            ],
+            "case_fields": [
+                {
+                    "name": "Required text field",
+                    "value": "Class"
+                }
+            ],
+            "result_fields": [
+                {
+                    "name": "Custom field",
+                    "value": "Result from class"
+                }
+            ],
+            "case_type": "Automated",
+            "case_priority": "Critical",
+            "smart_failure_assignment": [
+                "user1@gmail.com, user2@gmail.com"
+            ]
+        }
+    }
+]
+```
+5. Run Railflow CLI and upload test results into TestRail
+
+```shell
+npx railflow -k ABCDE-12345-FGHIJ-67890 -url https://testrail.your-server.com/ -u testrail-username -p testrail-password -pr "Railflow Demo" -path section1/section2 -f pytest-railflow -r pytest_example/*.json
+```
 
 Please check
 [examples](https://github.com/railflow/railflow_pytest_examples)
