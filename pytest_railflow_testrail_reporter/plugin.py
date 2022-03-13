@@ -3,8 +3,8 @@ from datetime import datetime
 from collections import OrderedDict
 import warnings
 import json
+
 import pytest
-from _pytest._code.code import ExceptionRepr
 
 
 CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'file_name', 'attachments']
@@ -47,7 +47,6 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "railflow(options): read custom metadata")
 
-
 def pytest_unconfigure(config):
     json = getattr(config, "json", None)
     if json:
@@ -57,7 +56,7 @@ def pytest_unconfigure(config):
 
 def mangle_test_address(address):
     """Split and modify test address to required format"""
-    path, brack, params = address.partition("[")
+    path, _, _ = address.partition("[")
     names = path.split("::")
     try:
         names.remove("()")
@@ -152,6 +151,7 @@ class JiraJsonReport(object):
     def __init__(self, jsonpath):
         self.results = []
         self.jsonpath = jsonpath
+        self.screenshots = {}
         self.extra = {}
         self.class_list = [
             "case_fields",
@@ -168,6 +168,15 @@ class JiraJsonReport(object):
             "case_type",
             "case_priority",
         ]
+
+    @pytest.fixture()
+    def testrail_add_screenshot(self, request):
+        def _func(path):
+            current = self.screenshots.get(request.node.nodeid, [])
+            current.append(path)
+            self.screenshots[request.node.nodeid] = current
+
+        yield _func
 
     def append(self, result):
         self.results.append(result)
@@ -196,14 +205,11 @@ class JiraJsonReport(object):
         result["result"] = status
         result["duration"] = getattr(report, "duration", 0.0)
         result["timestamp"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        if isinstance(message, ExceptionRepr):
-            # If this is a pytest error, get the message from the object
-            result["message"] = message.reprcrash.message
-        else:
-            result["message"] = message
+        result["message"] = str(message)
         result["file_name"] = fname.split("/")[-1]
         if hasattr(report.longrepr, "reprtraceback"):
             self.extra[result["file_name"]] = report.longrepr.reprtraceback
+        result["attachments"] = self.screenshots.get(report.nodeid, [])
         self.append(result)
 
     def append_pass(self, report):
@@ -333,7 +339,7 @@ class JiraJsonReport(object):
         test_marker = []
         test_params = []
 
-        # Get all the test markes
+        # Get all the test marks
         marks = item.own_markers
         if marks is not None:
             for mark in marks:
@@ -403,9 +409,9 @@ class JiraJsonReport(object):
                                 or self.results[i]["result"] == "XFAILED"
                             ):
                                 if ".png" in out:
-                                    self.results[i].update(
-                                        {"attachments": [out[start:end]]}
-                                    )
+                                    attachments = self.results[i].get("attachments", [])
+                                    attachments.append(out[start:end])
+                                    self.results[i]['attachments'] = attachments
 
                 fieldnames = restructure(self.results)
 
