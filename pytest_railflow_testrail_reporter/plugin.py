@@ -47,6 +47,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "railflow(options): read custom metadata")
 
+
 def pytest_unconfigure(config):
     json = getattr(config, "json", None)
     if json:
@@ -152,6 +153,7 @@ class JiraJsonReport(object):
         self.results = []
         self.jsonpath = jsonpath
         self.screenshots = {}
+        self.test_steps = {}
         self.extra = {}
         self.class_list = [
             "case_fields",
@@ -175,6 +177,15 @@ class JiraJsonReport(object):
             current = self.screenshots.get(request.node.nodeid, [])
             current.append(path)
             self.screenshots[request.node.nodeid] = current
+
+        yield _func
+
+    @pytest.fixture()
+    def testrail_add_test_step(self, request):
+        def _func(step):
+            current = self.test_steps.get(request.node.nodeid, [])
+            current.append(step)
+            self.test_steps[request.node.nodeid] = current
 
         yield _func
 
@@ -209,6 +220,7 @@ class JiraJsonReport(object):
         result["file_name"] = fname.split("/")[-1]
         if hasattr(report.longrepr, "reprtraceback"):
             self.extra[result["file_name"]] = report.longrepr.reprtraceback
+        result["test_steps"] = self.test_steps.get(report.nodeid, [])
         result["attachments"] = self.screenshots.get(report.nodeid, [])
         self.append(result)
 
