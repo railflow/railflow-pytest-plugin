@@ -4,8 +4,8 @@
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/pytest-railflow-testrail-reporter)](https://pypi.org/project/pytest-railflow-testrail-reporter/)
 
-pytest-railflow-testrail-reporter is a custom reporter which generates json report with  railflow markers provided during tests.
-The reporter helps you to integrate your pytest test with TestRail easily by producing Json test report files which can be uploaded into TestRail by using powerful [Railflow NPM CLI](https://www.npmjs.com/package/railflow) tool.  
+`pytest-railflow-testrail-reporter` is a custom reporter which generates JSON report file containing some TestRail-related data.  
+The reporter helps you to integrate your pytest test with TestRail easily by producing JSON test report files which can be uploaded into [TestRail](https://www.gurock.com/testrail/test-management/) by using powerful [Railflow NPM CLI](https://www.npmjs.com/package/railflow) tool or native plugins for [Jenkins and TeamCity](https://railflow.io/resources/downloads).  
 
 Requirements
 ============
@@ -32,14 +32,13 @@ This will install the plugin to the system.
 Usage
 =====
 
-Currently, the plugin supports the railflow markers given below. All
-other undefined params will be rejected with a warning.
+To add Railflow markers to the tests '@pytest.mark.railflow' marker is used.
 
-To add railflow markers to the tests '@pytest.mark.railflow' marker is used. Railflow markers added as a json inside the '@pytest.mark.railflow'.
+The plugin supports the following attributes:
 
-### Railflow configuration params description
+### Railflow configuration attributes description
 
-Marker Name | Description |
+Attribute Name | Description |
 ------------| -------------|
 title| Name of the test suite or test case|
 case_type| Case type in TestRail, e.g.: Automated, Compatibility, etc...|
@@ -50,9 +49,9 @@ jira_ids| Jira IDs.These values will be populated as a case field 'refs'. Should
 testrail_ids| IDs of test cases in TestRail. Should input as an array of integers, e.g.: [1,2,3]
 smart_failure_assignment| Array of TestRail users to automatically assign failed test cases. Should input as a string array, e.g.: ['aaa@test.com','bbb@test.com']
 
-These railflow markers can be either used in class level or function level.
+These attributes can be either used in class level or function level.
 
-  Function level Markers | Class level Markers
+  Function level attributes | Class level attributes
   --------------------------|-----------------------
   jira\_ids | case\_fields
   case\_fields | result\_fields
@@ -63,8 +62,7 @@ These railflow markers can be either used in class level or function level.
   smart\_failure\_assignment |
   title |
 
-To run the test, enter the following command in the terminal from test
-directory.
+To run the test, execute the following command in the terminal from the test directory:
 
     pytest --jsonfile output.json
 
@@ -79,7 +77,7 @@ Examples
 $ pip install pytest-railflow-testrail-reporter
 ```
 
-2. Add pytest test with railfllow marker params.
+2. Add pytest test with Railfllow marker on class level.
 
 test_calculation.py
 ```shell
@@ -89,13 +87,13 @@ import pytest
      jira_ids=["301219"],
     case_fields=[
         {
-            "name": "ReQuired text field",
+            "name": "Required text field",
             "value": "Class"
         }
     ],
     result_fields=[
         {
-            "name": "Custom fIeLD",
+            "name": "Custom field",
             "value": "Result from class"
         }
     ],
@@ -122,13 +120,13 @@ class TestClass:
         jira_ids=["11111"],
         case_fields=[
             {
-                "name": "ReQuired text field",
+                "name": "Required text field",
                 "value": "method"
             }
         ],
         result_fields=[
             {
-                "name": "Custom fIeLD",
+                "name": "Custom fieLD",
                 "value": "Result from method"
             }
         ],
@@ -206,13 +204,13 @@ output.json
                     ],
                     "case_fields": [
                         {
-                            "name": "ReQuired text field",
+                            "name": "Required text field",
                             "value": "method"
                         }
                     ],
                     "result_fields": [
                         {
-                            "name": "Custom fIeLD",
+                            "name": "Custom field",
                             "value": "Result from method"
                         }
                     ],
@@ -252,13 +250,13 @@ output.json
                     ],
                     "case_fields": [
                         {
-                            "name": "ReQuired text field",
+                            "name": "Required text field",
                             "value": "method"
                         }
                     ],
                     "result_fields": [
                         {
-                            "name": "Custom fIeLD",
+                            "name": "Custom field",
                             "value": "Result from method"
                         }
                     ],
@@ -298,13 +296,13 @@ output.json
                     ],
                     "case_fields": [
                         {
-                            "name": "ReQuired text field",
+                            "name": "Required text field",
                             "value": "method"
                         }
                     ],
                     "result_fields": [
                         {
-                            "name": "Custom fIeLD",
+                            "name": "Custom field",
                             "value": "Result from method"
                         }
                     ],
@@ -322,13 +320,13 @@ output.json
             ],
             "case_fields": [
                 {
-                    "name": "ReQuired text field",
+                    "name": "Required text field",
                     "value": "Class"
                 }
             ],
             "result_fields": [
                 {
-                    "name": "Custom fIeLD",
+                    "name": "Custom field",
                     "value": "Result from class"
                 }
             ],
