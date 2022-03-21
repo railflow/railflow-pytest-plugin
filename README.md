@@ -65,9 +65,9 @@ To run the test, execute the following command in the terminal from the test dir
 
     pytest --jsonfile output.json
 
-### Adding Screenshots to test report
+### Adding arbitrary attachments into test report
 
-Using "testrail_add_screenshot" fixture , screenshots can be added to the report.
+The `testrail_add_screenshot` fixture can be used to add arbitrary attachments into the test report:
 
 ```shell
 def test_add(testrail_add_screenshot):
@@ -80,7 +80,7 @@ def test_add(testrail_add_screenshot):
 
 ### Adding test steps to test report
 
-Using "testrail_add_test_step" fixture , test steps can be added to the report
+The `testrail_add_test_step` fixture can be used to add test steps into test report:
 
 ```shell
 def test_multiply(testrail_add_test_step):
