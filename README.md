@@ -60,13 +60,35 @@ These railflow markers can be either used in class level or function level.
   testrail\_ids | case\_priority
   case\_type | smart\_failure\_assignment
   case\_priority | title
-  smart\_failure\_assignment |
   title |
 
 To run the test, enter the following command in the terminal from test
 directory.
 
     pytest --jsonfile output.json
+
+### Adding Screenshots to test report
+
+Using "testrail_add_screenshot" fixture , screenshots can be added to the report.
+
+```shell
+def test_add(self):
+    a = 3
+    b = 2
+    c = a + b
+    assert c == 5
+    testrail_add_screenshot("screenshot path")
+```
+
+### Adding test steps to test report
+
+Using "testrail_add_test_step" fixture , test steps can be added to the report
+
+```shell
+def test_multiply(testrail_add_test_step):
+    testrail_add_test_step("multiply 8 and 4")
+    res = 8 * 4
+```
 
 Examples
 ========
