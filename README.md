@@ -70,7 +70,7 @@ To run the test, execute the following command in the terminal from the test dir
 Using "testrail_add_screenshot" fixture , screenshots can be added to the report.
 
 ```shell
-def test_add(self):
+def test_add(testrail_add_screenshot):
     a = 3
     b = 2
     c = a + b
