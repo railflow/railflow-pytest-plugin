@@ -3,11 +3,12 @@ from datetime import datetime
 from collections import OrderedDict
 import warnings
 import json
+
 import pytest
-from _pytest._code.code import ExceptionRepr
 
 
-CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'markers', 'file_name']
+CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'file_name', 'attachments']
+CLASS_ONLY = ['class_railflow', 'class_markers']
 
 
 _py_ext_re = re.compile(r"\.py$")
@@ -56,7 +57,7 @@ def pytest_unconfigure(config):
 
 def mangle_test_address(address):
     """Split and modify test address to required format"""
-    path, brack, params = address.partition("[")
+    path, _, _ = address.partition("[")
     names = path.split("::")
     try:
         names.remove("()")
@@ -91,21 +92,7 @@ def is_custom_attr_name_value_pairs(custom_attrs):
     return False
 
 
-def get_class_markers(class_name, session):
-    class_marks = None
-    for session_item in session.items:
-        if session_item.cls is not None and session_item.cls.__name__ == class_name:
-            for mark in session_item.cls.pytestmark:
-                if mark.name == 'railflow':
-                    class_marks = mark.kwargs
-                    break
-        if class_marks is not None:
-            break
-
-    return class_marks
-
-
-def restructure(data, session):
+def restructure(data):
     restructured_list = []
     restructured_classes = {}
     temp_list = []
@@ -122,7 +109,8 @@ def restructure(data, session):
             formatted_test = {}
 
             for entry_key in entry:
-                if (class_name is None or entry_key not in CLASS_KEYS):
+                if (class_name is None or entry_key not in CLASS_KEYS) and \
+                        entry_key not in CLASS_ONLY:
                     formatted_test[entry_key] = entry[entry_key]
             if len(temp_list) > 0:
                 formatted_test['railflow_test_attributes'] = OrderedDict(temp_list)
@@ -132,14 +120,17 @@ def restructure(data, session):
                 if formatted_entry is None:
                     formatted_entry = {
                         'class_name':  entry['class_name'],
-                        'markers': entry['markers'],
+                        'markers': entry['class_markers'],
                         'file_name': entry['file_name'],
+                        'attachments': [],
                         'tests': [],
                     }
-                    railflow_attr = get_class_markers(class_name, session)
-                    if railflow_attr is not None:
-                        formatted_entry['railflow_test_attributes'] = railflow_attr
+                    if len(entry['class_railflow']) > 0:
+                        formatted_entry['railflow_test_attributes'] = OrderedDict(
+                            entry['class_railflow'])
                 formatted_entry['tests'].append(formatted_test)
+                if entry.get('attachments', None) is not None:
+                    formatted_entry['attachments'] += entry['attachments']
                 restructured_classes[identifier.split(':')[0]] = formatted_entry
             else:
                 restructured_list.append(formatted_test)
@@ -161,6 +152,8 @@ class JiraJsonReport(object):
     def __init__(self, jsonpath):
         self.results = []
         self.jsonpath = jsonpath
+        self.screenshots = {}
+        self.test_steps = {}
         self.extra = {}
         self.class_list = [
             "case_fields",
@@ -177,6 +170,24 @@ class JiraJsonReport(object):
             "case_type",
             "case_priority",
         ]
+
+    @pytest.fixture()
+    def testrail_add_screenshot(self, request):
+        def _func(path):
+            current = self.screenshots.get(request.node.nodeid, [])
+            current.append(path)
+            self.screenshots[request.node.nodeid] = current
+
+        yield _func
+
+    @pytest.fixture()
+    def testrail_add_test_step(self, request):
+        def _func(step):
+            current = self.test_steps.get(request.node.nodeid, [])
+            current.append(step)
+            self.test_steps[request.node.nodeid] = current
+
+        yield _func
 
     def append(self, result):
         self.results.append(result)
@@ -198,19 +209,19 @@ class JiraJsonReport(object):
         else:
             result["details"] = report.test_doc.strip()
         result["markers"] = report.test_marker
+        result["class_markers"] = report.class_marker
+        result["class_railflow"] = report.class_railflow
         if len(report.test_params) > 0:
             result["parameters"] = report.test_params
         result["result"] = status
         result["duration"] = getattr(report, "duration", 0.0)
         result["timestamp"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        if isinstance(message, ExceptionRepr):
-            # If this is a pytest error, get the message from the object
-            result["message"] = message.reprcrash.message
-        else:
-            result["message"] = message
+        result["message"] = str(message)
         result["file_name"] = fname.split("/")[-1]
         if hasattr(report.longrepr, "reprtraceback"):
             self.extra[result["file_name"]] = report.longrepr.reprtraceback
+        result["test_steps"] = self.test_steps.get(report.nodeid, [])
+        result["attachments"] = self.screenshots.get(report.nodeid, [])
         self.append(result)
 
     def append_pass(self, report):
@@ -335,22 +346,33 @@ class JiraJsonReport(object):
 
         test_result = outcome.get_result()
         test_result.test_doc = item.obj.__doc__
+        class_marker = []
+        class_railflow = []
         test_marker = []
         test_params = []
-        marks = item.keywords.get('pytestmark', None)
+
+        # Get all the test marks
+        marks = item.own_markers
         if marks is not None:
             for mark in marks:
                 if mark.name != "railflow":
                     test_marker.append(mark.name)
                 # Extract parameters if they exist
-                if mark.name == 'parametrize':
-                    for param_var in mark.args[0].split(','):
-                        test_params.append({
-                            'name': param_var,
-                            'value': item.funcargs[param_var]
-                        })
-
+                    if mark.name == 'parametrize':
+                        for param_var in mark.args[0].split(','):
+                            test_params.append({
+                                'name': param_var,
+                                'value': item.funcargs[param_var]
+                            })
         test_result.test_marker = ", ".join(test_marker)
+
+        # Get all the class markes
+        if item.cls is not None and len(item.cls.pytestmark):
+            for mark in item.cls.pytestmark:
+                if mark.name != 'railflow':
+                    class_marker.append(mark.name)
+        test_result.class_marker = ", ".join(class_marker)
+
         test_result.test_params = test_params
 
         failed_in_setup = test_result.when == "setup" and test_result.outcome != 'passed'
@@ -359,6 +381,13 @@ class JiraJsonReport(object):
             for mark in reversed(marks):
                 for mark_arg in mark.kwargs:
                     self.results.append((mark_arg, mark.kwargs[mark_arg]))
+
+            if item.cls is not None:
+                for mark in reversed(item.cls.pytestmark):
+                    for mark_arg in mark.kwargs:
+                        class_railflow.append((mark_arg, mark.kwargs[mark_arg]))
+
+            test_result.class_railflow = class_railflow
 
     def pytest_runtest_logreport(self, report):
 
@@ -392,11 +421,11 @@ class JiraJsonReport(object):
                                 or self.results[i]["result"] == "XFAILED"
                             ):
                                 if ".png" in out:
-                                    self.results[i].update(
-                                        {"splinter_screenshots": out[start:end]}
-                                    )
+                                    attachments = self.results[i].get("attachments", [])
+                                    attachments.append(out[start:end])
+                                    self.results[i]['attachments'] = attachments
 
-                fieldnames = restructure(self.results, session)
+                fieldnames = restructure(self.results)
 
                 if self.jsonpath:
                     filepath = self.jsonpath
