@@ -383,15 +383,15 @@ Please see [Railflow NPM documentation](https://docs.railflow.io/cli/railflow-np
 
 #### Test run
 
-![Alt Test run in TestRail](./images/TestRail_testrun.png "Test run in TestRail")
+![Alt Test run in TestRail](https://github.com/railflow/railflow-pytest-plugin/raw/main/images/TestRail_testrun.png "Test run in TestRail")
 
 #### Test result details
 
-![Alt Test result details in TestRail](./images/TestRail_testcase_data.png "Test result details in Testrail")
+![Alt Test result details in TestRail](https://github.com/railflow/railflow-pytest-plugin/raw/main/images/TestRail_testcase_data.png "Test result details in Testrail")
 
 #### Parameterized tests details
 
-![Alt Parameterized tests details in TestRail](./images/TestRail_parameterized_tests.png "Test result parameterized tests in Testrail")
+![Alt Parameterized tests details in TestRail](https://github.com/railflow/railflow-pytest-plugin/raw/main/images/TestRail_parameterized_tests.png "Test result parameterized tests in Testrail")
 
 ### Example 2 : pytest tests without a class (using pytest splinter)
 
