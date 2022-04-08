@@ -216,7 +216,7 @@ class JiraJsonReport(object):
         result["result"] = status
         result["duration"] = getattr(report, "duration", 0.0)
         result["timestamp"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        result["message"] = str(message)
+        result["message"] = str(message) if message is not None else None
         result["file_name"] = fname.split("/")[-1]
         if hasattr(report.longrepr, "reprtraceback"):
             self.extra[result["file_name"]] = report.longrepr.reprtraceback
