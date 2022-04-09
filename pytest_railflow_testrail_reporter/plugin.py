@@ -182,9 +182,15 @@ class JiraJsonReport(object):
 
     @pytest.fixture()
     def testrail_add_test_step(self, request):
-        def _func(step):
+        def _func(name, status, expected_val, actual_val):
+            test_step = {
+                "step_name": str(name),
+                "status": str(status),
+                "actual": str(actual_val),
+                "expected": str(expected_val)
+            }
             current = self.test_steps.get(request.node.nodeid, [])
-            current.append(step)
+            current.append(test_step)
             self.test_steps[request.node.nodeid] = current
 
         yield _func
