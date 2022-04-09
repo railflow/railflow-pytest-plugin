@@ -7,7 +7,7 @@ import json
 import pytest
 
 
-CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'file_name', 'attachments']
+CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'file_name']
 CLASS_ONLY = ['class_railflow', 'class_markers']
 
 
@@ -122,15 +122,14 @@ def restructure(data):
                         'class_name':  entry['class_name'],
                         'markers': entry['class_markers'],
                         'file_name': entry['file_name'],
-                        'attachments': [],
                         'tests': [],
                     }
                     if len(entry['class_railflow']) > 0:
                         formatted_entry['railflow_test_attributes'] = OrderedDict(
                             entry['class_railflow'])
                 formatted_entry['tests'].append(formatted_test)
-                if entry.get('attachments', None) is not None:
-                    formatted_entry['attachments'] += entry['attachments']
+                # if entry.get('attachments', None) is not None:
+                #     formatted_entry['attachments'] += entry['attachments']
                 restructured_classes[identifier.split(':')[0]] = formatted_entry
             else:
                 restructured_list.append(formatted_test)
