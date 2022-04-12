@@ -117,7 +117,7 @@ def restructure(data):
                 formatted_entry = restructured_classes.get(identifier.split(':')[0], None)
                 if formatted_entry is None:
                     formatted_entry = {
-                        'class_name':  entry['class_name'],
+                        'class_name': entry['class_name'],
                         'markers': entry['class_markers'],
                         'file_name': entry['file_name'],
                         'tests': [],
@@ -179,7 +179,7 @@ class JiraJsonReport(object):
 
     @pytest.fixture()
     def testrail_add_test_step(self, request):
-        def _func(name, status, expected_val="", actual_val=""):
+        def _func(name, status, actual_val="", expected_val=""):
             test_step = {
                 "step_name": str(name),
                 "status": str(status),
@@ -276,12 +276,12 @@ class JiraJsonReport(object):
             'case_fields': {
                 "validation": is_custom_attr_name_value_pairs,
                 "expected": "list of Name value pairs (i.e. [{'name': 'Foo', 'value': 2312}, "
-                "{'name': 'Bar', 'value': 'Baz'}])"
+                            "{'name': 'Bar', 'value': 'Baz'}])"
             },
             'result_fields': {
                 "validation": is_custom_attr_name_value_pairs,
                 "expected": "list of Name value pairs (i.e. [{'name': 'Foo', 'value': 2312}, "
-                "{'name': 'Bar', 'value': 'Baz'}])"
+                            "{'name': 'Bar', 'value': 'Baz'}])"
             },
             'case_type': {
                 "validation": lambda val: isinstance(val, str),
@@ -293,17 +293,17 @@ class JiraJsonReport(object):
             },
             'testrail_ids': {
                 "validation": lambda val: isinstance(val, list) and
-                [isinstance(v, int) for v in val].count(True) == len(val),
+                                          [isinstance(v, int) for v in val].count(True) == len(val),
                 "expected": "List of intergers (i.e. [1, 2, 456, 7, 3])"
             },
             'jira_ids': {
                 "validation": lambda val: isinstance(val, list) and
-                [isinstance(v, str) for v in val].count(True) == len(val),
+                                          [isinstance(v, str) for v in val].count(True) == len(val),
                 "expected": "List of strings (i.e. ['FOO-1', 'BAR-1', 'BAZ-56'])"
             },
             'smart_failure_assignment': {
                 "validation": lambda val: isinstance(val, list) and
-                [isinstance(v, str) for v in val].count(True) == len(val),
+                                          [isinstance(v, str) for v in val].count(True) == len(val),
                 "expected": "List of strings (i.e. ['jdoe', 'jimbo'])"
             }
         }
@@ -360,7 +360,7 @@ class JiraJsonReport(object):
             for mark in marks:
                 if mark.name != "railflow":
                     test_marker.append(mark.name)
-                # Extract parameters if they exist
+                    # Extract parameters if they exist
                     if mark.name == 'parametrize':
                         for param_var in mark.args[0].split(','):
                             test_params.append({
@@ -420,8 +420,8 @@ class JiraJsonReport(object):
                             continue
                         if self.results[i]["file_name"] == k:
                             if (
-                                self.results[i]["result"] == "FAILED"
-                                or self.results[i]["result"] == "XFAILED"
+                                    self.results[i]["result"] == "FAILED"
+                                    or self.results[i]["result"] == "XFAILED"
                             ):
                                 if ".png" in out:
                                     attachments = self.results[i].get("attachments", [])
