@@ -1,15 +1,13 @@
-import re
-from datetime import datetime
-from collections import OrderedDict
-import warnings
 import json
+import re
+import warnings
+from collections import OrderedDict
+from datetime import datetime
 
 import pytest
 
-
 CLASS_KEYS = ['railflow_test_attributes', 'class_name', 'file_name']
 CLASS_ONLY = ['class_railflow', 'class_markers']
-
 
 _py_ext_re = re.compile(r"\.py$")
 
@@ -181,7 +179,7 @@ class JiraJsonReport(object):
 
     @pytest.fixture()
     def testrail_add_test_step(self, request):
-        def _func(name, status, expected_val, actual_val):
+        def _func(name, status, expected_val="", actual_val=""):
             test_step = {
                 "step_name": str(name),
                 "status": str(status),
