@@ -293,17 +293,17 @@ class JiraJsonReport(object):
             },
             'testrail_ids': {
                 "validation": lambda val: isinstance(val, list) and
-                                          [isinstance(v, int) for v in val].count(True) == len(val),
+                              [isinstance(v, int) for v in val].count(True) == len(val),
                 "expected": "List of intergers (i.e. [1, 2, 456, 7, 3])"
             },
             'jira_ids': {
                 "validation": lambda val: isinstance(val, list) and
-                                          [isinstance(v, str) for v in val].count(True) == len(val),
+                              [isinstance(v, str) for v in val].count(True) == len(val),
                 "expected": "List of strings (i.e. ['FOO-1', 'BAR-1', 'BAZ-56'])"
             },
             'smart_failure_assignment': {
                 "validation": lambda val: isinstance(val, list) and
-                                          [isinstance(v, str) for v in val].count(True) == len(val),
+                              [isinstance(v, str) for v in val].count(True) == len(val),
                 "expected": "List of strings (i.e. ['jdoe', 'jimbo'])"
             }
         }
