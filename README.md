@@ -82,9 +82,9 @@ def test_add(testrail_add_screenshot):
 
 The `testrail_add_test_step` fixture can be used to add test steps into test report:
 
-Parameter order for `testrail_add_test_step` fixture.
+The fixture has the following parameters:
 
-Parameter Order | Description | Is Mandatory
+Order | Description | Is Mandatory
   --------------------------|-----------------------|--------------------
 1 | Step Name | Yes
 2 | Status Name | Yes
