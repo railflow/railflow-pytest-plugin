@@ -78,6 +78,23 @@ def test_add(testrail_add_screenshot):
     testrail_add_screenshot("screenshot path")
 ```
 
+### Adding test steps to test report
+
+The `testrail_add_test_step` fixture can be used to add test steps into test report:
+
+Arguments | Description | Is Mandatory
+  --------------------------|-----------------------|--------------------
+1 | Step Name | Yes
+2 | Status Name | Yes
+3 | Actual Value | No
+4| Expected Value | No
+
+```shell
+def test_multiply(testrail_add_test_step):
+    res = 8 * 4
+    testrail_add_test_step("multiply 8 and 4", "PASSED", res, "32")
+```
+
 Examples
 ========
 
