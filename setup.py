@@ -4,10 +4,9 @@ import io
 
 from setuptools import setup
 
-
 setup(
     name="pytest-railflow-testrail-reporter",
-    version="0.2.3",
+    version="0.2.4",
     description="Generate json reports along with specified metadata defined in test markers.",
     long_description=io.open("README.md", encoding="utf-8", errors="ignore").read(),
     long_description_content_type='text/markdown',
