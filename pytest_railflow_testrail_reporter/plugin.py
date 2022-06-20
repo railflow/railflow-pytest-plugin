@@ -378,8 +378,6 @@ class JiraJsonReport(object):
 
         test_result.test_params = test_params
 
-        failed_in_setup = test_result.when == "setup" and test_result.outcome != 'passed'
-
         if marks is not None:
             for mark in reversed(marks):
                 for mark_arg in mark.kwargs:
