@@ -378,16 +378,17 @@ class JiraJsonReport(object):
 
         test_result.test_params = test_params
 
-        for mark in reversed(marks):
-            for mark_arg in mark.kwargs:
-                self.results.append((mark_arg, mark.kwargs[mark_arg]))
-
-        if item.cls is not None:
-            for mark in reversed(item.cls.pytestmark):
+        if marks is not None:
+            for mark in reversed(marks):
                 for mark_arg in mark.kwargs:
-                    class_railflow.append((mark_arg, mark.kwargs[mark_arg]))
+                    self.results.append((mark_arg, mark.kwargs[mark_arg]))
 
-        test_result.class_railflow = class_railflow
+            if item.cls is not None:
+                for mark in reversed(item.cls.pytestmark):
+                    for mark_arg in mark.kwargs:
+                        class_railflow.append((mark_arg, mark.kwargs[mark_arg]))
+
+            test_result.class_railflow = class_railflow
 
     def pytest_runtest_logreport(self, report):
 
