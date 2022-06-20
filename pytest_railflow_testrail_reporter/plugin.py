@@ -390,7 +390,7 @@ class JiraJsonReport(object):
                     for mark_arg in mark.kwargs:
                         class_railflow.append((mark_arg, mark.kwargs[mark_arg]))
 
-            test_result.class_railflow = class_railflow
+        test_result.class_railflow = class_railflow
 
     def pytest_runtest_logreport(self, report):
 
