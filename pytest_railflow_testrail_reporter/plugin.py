@@ -370,7 +370,7 @@ class JiraJsonReport(object):
         test_result.test_marker = ", ".join(test_marker)
 
         # Get all the class markes
-        if item.cls is not None and len(item.cls.pytestmark):
+        if item.cls is not None and item.cls.pytestmark is not None and len(item.cls.pytestmark):
             for mark in item.cls.pytestmark:
                 if mark.name != 'railflow':
                     class_marker.append(mark.name)
